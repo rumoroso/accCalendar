@@ -1,0 +1,45 @@
+.acc-calendar-table-wrapper table {
+  border-collapse: separate;
+}
+.acc-calendar-table-wrapper a:focus {
+  box-shadow: 0 0 2px red;
+}
+.acc-calendar-table-wrapper .acc-date-disabled span {
+  background-color: #999;
+  color: #EEE;
+  display: block;
+}
+.acc-calendar-table-wrapper th,
+.acc-calendar-table-wrapper td{
+  width: 2em;
+}
+.acc-calendar-table-wrapper td.acc-date-active span,
+.acc-calendar-table-wrapper td.acc-date-active a {
+  border: 1px solid red;
+}
+.acc-calendar-table-wrapper td span,
+.acc-calendar-table-wrapper td a {
+  display: block;
+  width: 100%;
+  line-height: 1.5em;
+  text-align: center;
+}
+.acc-calendar-table-wrapper td a {
+  cursor: pointer;
+}
+.acc-calendar-table-wrapper td a:hover {
+  background-color: #CCC;
+  color: #666;
+}
+.acc-calendar-table-wrapper .acc-date-current a,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a,
+.acc-calendar-table-wrapper .acc-date-current span {
+  background-color: #0F0;
+  color: #333;
+}
+.acc-calendar-table-wrapper .acc-date-disabled-exception span {
+  background-color: #090;
+}
+.acc-calendar-table-wrapper .acc-date-disabled-regular span {
+  background-color: #0F9;
+}
