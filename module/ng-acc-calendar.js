@@ -71,7 +71,7 @@ angular.module('ngAccCalendar', [])
     })
 
     .controller('calendarController', function ($scope, calendarModelService) {
-        var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, minDay, minMonth, minYear, maxMonth, maxDay, maxYear, listenInputField;
+            var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, minDay, minMonth, minYear, maxMonth, maxDay, maxYear, listenInputField;
 
         $scope.defaultConfiguration = {
             initialDate: new Date(),
@@ -107,7 +107,7 @@ angular.module('ngAccCalendar', [])
                     {month: 4, day: 15}
                 ]
             },
-            //minDate: new Date(2015, 2, 10),
+            minDate: new Date(2015, 3, 10),
             maxDate: new Date(2016, 4, 10),
             setDefaultDate: true,
             format: 'd m yyyy'
@@ -398,16 +398,16 @@ angular.module('ngAccCalendar', [])
                         '<div class="acc-calendar-table-wrapper" ng-show="showCalendar">' +
                         '<span><select ng-model="month" ng-disabled="availableMonths.length === 1">' +
                         '<option ng-repeat="month in availableMonths" value="{{month}}" ng-selected="month === calendarModel.month">{{monthNaming["es"][month]}}</option>' +
-                        '</select></span>' +
-                        '<span><select ng-model="year" ng-disabled="availableYears.length === 1">' +
+                        '</select>' +
+                        '<select ng-model="year" ng-disabled="availableYears.length === 1">' +
                         '<option ng-repeat="year in availableYears" value="{{year}}" ng-selected="year === calendarModel.year">{{year}}</option>' +
                         '</select></span>' +
                         '<table>' +
                         '<caption aria-live="polite" aria-atomic="true">{{monthNaming["es"][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
-                        '<thead><tr><th scope="col" ng-repeat="header in calendarModel.headerRow"><abbr title="{{header}}">{{header.substr(0, 3)}}</abbr></th></tr></thead>' +
+                        '<thead><tr><th scope="col" ng-repeat="header in calendarModel.headerRow"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
                         '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$lastx}}" ng-class="::rowClass($index, $last)">' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}">' +
-                        '<a tabindex="0" ng-click="setDate(day, true)" ng-keypress="setDate(day, true)" ng-if="day &&  !disabledDay(day, $index)" class="acc-button-date" ng-keydown="nextButton($event)">{{day}}</a>' +
+                        '<a role="button" tabindex="0" ng-click="setDate(day, true)" ng-keypress="setDate(day, true)" ng-if="day &&  !disabledDay(day, $index)" class="acc-button-date" ng-keydown="nextButton($event)">{{day}}</a>' +
                         '<span ng-if="day &&  disabledDay(day, $index)" >{{day}}</span>' +
                         '</td>' +
                         '</tr></tbody>' +

@@ -1,45 +1,149 @@
+.acc-calendar-table-wrapper {
+    position: relative;
+    margin-top: 10px;
+    max-width: 300px;
+    color: #6f6660;
+    background-color: #f5f4f1;
+    padding-bottom: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 0 3px;
+}
+
+.acc-calendar-table-wrapper:before {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 10%;
+    top: -16px;
+    margin-left: -8px;
+    border: 8px solid;
+    border-color: transparent transparent #bbb transparent;
+}
+
+.acc-calendar-table-wrapper > span {
+    text-align: center;
+    margin: auto;
+    display: block;
+    padding: 5px 0;
+    background-color: #bbb;
+}
+
+.acc-calendar-table-wrapper > span select {
+    padding: 2px 0;
+    display: inline-block;
+    border: none;
+    color: #6f6660;
+}
+
+.acc-calendar-table-wrapper > span select[ng-model=month] {
+    width: 50%;
+    margin-right: 5%;
+}
+
+.acc-calendar-table-wrapper > span select[ng-model=year] {
+    width: 25%
+}
+
 .acc-calendar-table-wrapper table {
-  border-collapse: separate;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
+
+.acc-calendar-table-wrapper caption {
+    font-weight: bold;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
 .acc-calendar-table-wrapper a:focus {
-  box-shadow: 0 0 2px red;
+    box-shadow: 0 0 2px red;
 }
-.acc-calendar-table-wrapper .acc-date-disabled span {
-  background-color: #999;
-  color: #EEE;
-  display: block;
-}
+
 .acc-calendar-table-wrapper th,
-.acc-calendar-table-wrapper td{
-  width: 2em;
+.acc-calendar-table-wrapper td {
+    width: 14.3%;
+    text-align: center;
+    padding: 2px;
 }
-.acc-calendar-table-wrapper td.acc-date-active span,
-.acc-calendar-table-wrapper td.acc-date-active a {
-  border: 1px solid red;
-}
+
 .acc-calendar-table-wrapper td span,
 .acc-calendar-table-wrapper td a {
-  display: block;
-  width: 100%;
-  line-height: 1.5em;
-  text-align: center;
+    display: block;
+    width: 100%;
+    line-height: 1.5em;
+    text-align: center;
+    position: relative;
 }
+
 .acc-calendar-table-wrapper td a {
-  cursor: pointer;
+    cursor: pointer;
 }
+
+.acc-calendar-table-wrapper td.acc-date-active span,
+.acc-calendar-table-wrapper td.acc-date-active a {
+    border: 1px solid red;
+}
+
 .acc-calendar-table-wrapper td a:hover {
-  background-color: #CCC;
-  color: #666;
+    background-color: #CCC;
+    color: #666;
 }
-.acc-calendar-table-wrapper .acc-date-current a,
-.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a,
-.acc-calendar-table-wrapper .acc-date-current span {
-  background-color: #0F0;
-  color: #333;
+
+.acc-calendar-table-wrapper td a {
+    display: block;
+    padding: 5px 0;
+    line-height: 1;
+    border: 1px solid #d6d3cc;
+    background-color: white;
+    cursor: pointer;
 }
-.acc-calendar-table-wrapper .acc-date-disabled-exception span {
-  background-color: #090;
+
+.acc-calendar-table-wrapper td.disabled a,
+.acc-calendar-table-wrapper td.disabled a:hover,
+.acc-calendar-table-wrapper td.disabled a:focus {
+    color: #7f766e;
+    background: none;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
 }
-.acc-calendar-table-wrapper .acc-date-disabled-regular span {
-  background-color: #0F9;
+
+.acc-calendar-table-wrapper .acc-date-current a:after,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:after,
+.acc-calendar-table-wrapper .acc-date-current span:after,
+.acc-calendar-table-wrapper .acc-date-disabled-exception span:after,
+.acc-calendar-table-wrapper .acc-date-disabled-regular span:after {
+    display: block;
+    content: '';
+    position: absolute;
+    border: 3px solid;
+    width: 0;
 }
+
+.acc-calendar-table-wrapper .acc-date-current a:after,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:after,
+.acc-calendar-table-wrapper .acc-date-current span:after {
+    border-color: #c00 #c00 transparent transparent;
+    right: 2px;
+    top: 2px;
+}
+
+.acc-calendar-table-wrapper .acc-date-disabled-exception span:after {
+    border-color: transparent #c00 #c00 transparent;
+    right: 2px;
+    bottom: 2px;
+}
+
+.acc-calendar-table-wrapper .acc-date-disabled-regular span:after {
+    border-color: transparent transparent #c00 #c00;
+    left: 2px;
+    bottom: 2px;
+}
+
+
