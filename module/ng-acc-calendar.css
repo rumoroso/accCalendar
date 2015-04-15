@@ -33,6 +33,7 @@
     display: inline-block;
     border: none;
     color: #6f6660;
+    font-size: 1em;
 }
 
 .acc-calendar-table-wrapper > span select[ng-model=month] {
@@ -88,10 +89,19 @@
 .acc-calendar-table-wrapper td.acc-date-active a {
     border: 1px solid red;
 }
+.acc-calendar-table-wrapper td a {
+    -webkit-transition: -webkit-transform .5s;
+    transition: transform .5s;
+}
 
-.acc-calendar-table-wrapper td a:hover {
+.acc-calendar-table-wrapper td a:hover,
+.acc-calendar-table-wrapper td a:focus {
     background-color: #CCC;
     color: #666;
+    -webkit-transform: scale(1.2,1.2);
+    transform: scale(1.2,1.2);
+    z-index: 10000;
+    box-shadow: 0 0 4px;
 }
 
 .acc-calendar-table-wrapper td a {
@@ -103,16 +113,6 @@
     cursor: pointer;
 }
 
-.acc-calendar-table-wrapper td.disabled a,
-.acc-calendar-table-wrapper td.disabled a:hover,
-.acc-calendar-table-wrapper td.disabled a:focus {
-    color: #7f766e;
-    background: none;
-    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-    opacity: 0.5;
-    cursor: default;
-    pointer-events: none;
-}
 
 .acc-calendar-table-wrapper .acc-date-current a:after,
 .acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:after,
@@ -145,5 +145,3 @@
     left: 2px;
     bottom: 2px;
 }
-
-
