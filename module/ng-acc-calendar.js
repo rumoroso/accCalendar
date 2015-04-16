@@ -339,7 +339,7 @@ angular.module('ngAccCalendar', [])
         $scope.nextButton = function (event) {
             var currentRow, rowsLength, currentCell, currentCalendar, currentColIndex, currentRowIndex, nextButton, caption = false;
 
-            if (event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+            if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
                 return;
             }
 
@@ -366,7 +366,7 @@ angular.module('ngAccCalendar', [])
                 if (nextButton && !nextButton.length) {
                     $scope.caption.focus();
                 }
-            } else if (event.keyCode === 40) {
+            } else if (event.keyCode === 40 || (caption && event.keyCode === 13)) {
                 if(!caption){
                     while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
                         currentRowIndex++;
