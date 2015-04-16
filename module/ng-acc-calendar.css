@@ -89,19 +89,33 @@
 .acc-calendar-table-wrapper td.acc-date-active a {
     border: 1px solid red;
 }
+
+.acc-calendar-table-wrapper caption,
+.acc-calendar-table-wrapper select,
 .acc-calendar-table-wrapper td a {
     -webkit-transition: -webkit-transform .5s;
     transition: transform .5s;
 }
 
+.acc-calendar-table-wrapper caption:focus,
+.acc-calendar-table-wrapper select:focus,
 .acc-calendar-table-wrapper td a:hover,
 .acc-calendar-table-wrapper td a:focus {
-    background-color: #CCC;
+    background-color: #FFB;
     color: #666;
-    -webkit-transform: scale(1.2,1.2);
-    transform: scale(1.2,1.2);
+    transform: scale(1.2, 1.2);
+    transform: scale(1.2, 1.2);
     z-index: 10000;
     box-shadow: 0 0 4px;
+}
+
+.acc-calendar-table-wrapper select:focus {
+    transform: scale(1.1, 1.1);
+}
+
+.acc-calendar-table-wrapper select:focus,
+.acc-calendar-table-wrapper caption:focus {
+    transform: scale(1.05, 1.05);
 }
 
 .acc-calendar-table-wrapper td a {
@@ -113,10 +127,9 @@
     cursor: pointer;
 }
 
-
-.acc-calendar-table-wrapper .acc-date-current a:after,
-.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:after,
-.acc-calendar-table-wrapper .acc-date-current span:after,
+.acc-calendar-table-wrapper .acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-current span:before,
 .acc-calendar-table-wrapper .acc-date-disabled-exception span:after,
 .acc-calendar-table-wrapper .acc-date-disabled-regular span:after {
     display: block;
@@ -126,10 +139,10 @@
     width: 0;
 }
 
-.acc-calendar-table-wrapper .acc-date-current a:after,
-.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:after,
-.acc-calendar-table-wrapper .acc-date-current span:after {
-    border-color: #c00 #c00 transparent transparent;
+.acc-calendar-table-wrapper .acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-current span:before {
+    border-color: #0c0;
     right: 2px;
     top: 2px;
 }
