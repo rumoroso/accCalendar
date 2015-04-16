@@ -68,8 +68,24 @@
 .acc-calendar-table-wrapper th,
 .acc-calendar-table-wrapper td {
     width: 14.3%;
+}
+
+.acc-calendar-table-wrapper .add-calendar-table-week-number th,
+.acc-calendar-table-wrapper .add-calendar-table-week-number td {
+    width: 13.14%;
+}
+
+.acc-calendar-table-wrapper th,
+.acc-calendar-table-wrapper td {
     text-align: center;
     padding: 2px;
+}
+
+.acc-calendar-table-wrapper th.add-calendar-week-number,
+.acc-calendar-table-wrapper td.add-calendar-week-number{
+    width: 8%;
+    font-size: .8em;
+    text-align: left;
 }
 
 .acc-calendar-table-wrapper td span,
