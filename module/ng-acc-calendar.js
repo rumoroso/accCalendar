@@ -119,18 +119,12 @@ angular.module('ngAccCalendar', [])
         currentMonth = $scope.currentDate.getMonth();
         currentDate = $scope.currentDate.getDate();
 
-        if ($scope.configuration.minDate) {
-            $scope.configuration.initialDate = $scope.configuration.initialDate >= $scope.configuration.minDate ? $scope.configuration.initialDate : $scope.configuration.minDate;
-            minYear = $scope.configuration.minDate.getFullYear();
-            minMonth = $scope.configuration.minDate.getMonth();
-            minDay = $scope.configuration.minDate.getDate();
-        }
-        if ($scope.configuration.maxDate) {
-            $scope.configuration.initialDate = $scope.configuration.initialDate <= $scope.configuration.maxDate ? $scope.configuration.initialDate : $scope.configuration.maxDate;
-            maxYear = $scope.configuration.maxDate.getFullYear();
-            maxMonth = $scope.configuration.maxDate.getMonth();
-            maxDay = $scope.configuration.maxDate.getDate();
-        }
+        minYear = $scope.configuration.minDate.getFullYear();
+        minMonth = $scope.configuration.minDate.getMonth();
+        minDay = $scope.configuration.minDate.getDate();
+        maxYear = $scope.configuration.maxDate.getFullYear();
+        maxMonth = $scope.configuration.maxDate.getMonth();
+        maxDay = $scope.configuration.maxDate.getDate();
 
         $scope.selectedDate = $scope.configuration.initialDate;
         selectedYear = $scope.selectedDate.getFullYear();
@@ -163,9 +157,7 @@ angular.module('ngAccCalendar', [])
                 showWeekNumber: false,
                 minDate: false,
                 maxDate: false
-
             };
-
 
             customConfiguration = customConfiguration ? customConfiguration : {};
             customConfiguration.visible = customConfiguration.visible || defaultConfiguration.visible;
@@ -191,6 +183,9 @@ angular.module('ngAccCalendar', [])
             customConfiguration.disabledDates = customConfiguration.disabledDates || defaultConfiguration.disabledDates;
             customConfiguration.setDefaultDate = customConfiguration.setDefaultDate || defaultConfiguration.setDefaultDate;
             customConfiguration.format = customConfiguration.format || defaultConfiguration.format;
+
+            customConfiguration.initialDate = customConfiguration.initialDate >= customConfiguration.minDate ? customConfiguration.initialDate : customConfiguration.minDate;
+            customConfiguration.initialDate = customConfiguration.initialDate <= customConfiguration.maxDate ? customConfiguration.initialDate : customConfiguration.maxDate;
 
             return customConfiguration;
         }
@@ -518,9 +513,10 @@ angular.module('ngAccCalendar', [])
             link: function (scope, element) {
                 var template = '<div  ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
                         '<div class="acc-calendar-table-wrapper">' +
-                        '<span><select ng-model="month" ng-disabled="availableMonths.length === 1">' +
+                        '<span><select ng-model="month" ng-show="availableMonths.length > 1">' +
                         '<option ng-repeat="month in availableMonths" value="{{month}}" ng-selected="month === calendarModel.month">{{calendarModel.monthNaming["es"][month]}}</option>' +
-                        '</select><select ng-model="year" ng-disabled="availableYears.length === 1">' +
+                        '</select>' +
+                        '<select ng-model="year" ng-show="availableYears.length > 1">' +
                         '<option ng-repeat="year in availableYears" value="{{year}}" ng-selected="year === calendarModel.year">{{year}}</option>' +
                         '</select></span>' +
                         '<table ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
