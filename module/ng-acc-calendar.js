@@ -539,7 +539,7 @@ angular.module('ngAccCalendar', [])
                         '</table>' +
                         '</div>' +
                         '</div>',
-                    button = '<button ng-click="showCalendar = !showCalendar"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
+                    button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
                     wrapper = $compile(template)(scope);
 
                 element.after(wrapper);
