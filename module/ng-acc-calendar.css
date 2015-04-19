@@ -1,0 +1,194 @@
+.acc-calendar {
+    display: inline-block;
+    position: absolute;
+    min-width: 270px;
+    max-width: 350px;
+    display: block;
+}
+
+.acc-calendar-button {
+    display: inline-block;
+    width: 16px;
+    height: 15px;
+    border: none;
+    text-indent: -100px;
+    background: transparent url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAABLCAMAAABOZPdnAAABgFBMVEUAAABKTUr////W09alpqXabQx4dnYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADZZ19NAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQffBBMOMzE3uxLrAAAAUUlEQVQ4y+2TuwoAIQwE1436/5984gNcyKHNXaNDqiEh1YBRIGJudBEcQdo0nrBOKphNG6mOJ15P1l8aOycIAi6Xg9H28XX7BW1/iF/ap7bPB75CBWe0An71AAAAAElFTkSuQmCC') center top no-repeat;
+}
+
+.acc-calendar-button:hover,
+.acc-calendar-button:focus{
+    background-position: center -60px;
+}
+
+.acc-calendar-table-wrapper {
+    position: relative;
+    margin-top: 10px;
+    color: #6f6660;
+    background-color: #f5f4f1;
+    padding-bottom: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 0 3px;
+}
+
+.acc-calendar-table-wrapper:before {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 10%;
+    top: -16px;
+    margin-left: -8px;
+    border: 8px solid;
+    border-color: transparent transparent #bbb transparent;
+}
+
+.acc-calendar-table-wrapper > span {
+    text-align: center;
+    margin: auto;
+    display: block;
+    padding: 5px 0;
+    background-color: #bbb;
+}
+
+.acc-calendar-table-wrapper > span select {
+    padding: 2px 0;
+    display: inline-block;
+    border: none;
+    color: #6f6660;
+    font-size: 1em;
+}
+
+.acc-calendar-table-wrapper > span select[ng-model=month] {
+    width: 50%;
+    margin-right: 5%;
+}
+
+.acc-calendar-table-wrapper > span select[ng-model=year] {
+    width: 25%;
+}
+
+.acc-calendar-table-wrapper table {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.acc-calendar-table-wrapper caption {
+    font-weight: bold;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.acc-calendar-table-wrapper a:focus {
+    box-shadow: 0 0 2px red;
+}
+
+.acc-calendar-table-wrapper th,
+.acc-calendar-table-wrapper td {
+    width: 14.3%;
+}
+
+.acc-calendar-table-wrapper .add-calendar-table-week-number th,
+.acc-calendar-table-wrapper .add-calendar-table-week-number td {
+    width: 13.14%;
+}
+
+.acc-calendar-table-wrapper th,
+.acc-calendar-table-wrapper td {
+    text-align: center;
+    padding: 2px;
+}
+
+.acc-calendar-table-wrapper th.add-calendar-week-number,
+.acc-calendar-table-wrapper td.add-calendar-week-number{
+    width: 8%;
+    font-size: .7em;
+}
+
+.acc-calendar-table-wrapper td span,
+.acc-calendar-table-wrapper td a {
+    display: block;
+    width: 100%;
+    line-height: 1.5em;
+    text-align: center;
+    position: relative;
+}
+
+.acc-calendar-table-wrapper td a {
+    cursor: pointer;
+}
+
+.acc-calendar-table-wrapper td.acc-date-active span,
+.acc-calendar-table-wrapper td.acc-date-active a {
+    border: 1px solid red;
+}
+
+.acc-calendar-table-wrapper caption,
+.acc-calendar-table-wrapper select,
+.acc-calendar-table-wrapper td a {
+    transition: transform .5s;
+}
+
+.acc-calendar-table-wrapper caption:focus,
+.acc-calendar-table-wrapper select:focus,
+.acc-calendar-table-wrapper td a:hover,
+.acc-calendar-table-wrapper td a:focus {
+    background-color: #FFB;
+    color: #666;
+    transform: scale(1.2, 1.2);
+    z-index: 10000;
+    box-shadow: 0 0 4px;
+}
+
+.acc-calendar-table-wrapper select:focus {
+    transform: scale(1.1, 1.1);
+}
+
+.acc-calendar-table-wrapper select:focus,
+.acc-calendar-table-wrapper caption:focus {
+    transform: scale(1.05, 1.05);
+}
+
+.acc-calendar-table-wrapper td a {
+    display: block;
+    padding: 5px 0;
+    line-height: 1;
+    border: 1px solid #d6d3cc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.acc-calendar-table-wrapper .acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-current span:before,
+.acc-calendar-table-wrapper .acc-date-disabled-exception span:after,
+.acc-calendar-table-wrapper .acc-date-disabled-regular span:after {
+    display: block;
+    content: '';
+    position: absolute;
+    border: 3px solid;
+    width: 0;
+}
+
+.acc-calendar-table-wrapper .acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-disabled.acc-date-current a:before,
+.acc-calendar-table-wrapper .acc-date-current span:before {
+    border-color: #0c0;
+    right: 2px;
+    top: 2px;
+}
+
+.acc-calendar-table-wrapper .acc-date-disabled-exception span:after {
+    border-color: transparent #c00 #c00 transparent;
+    right: 2px;
+    bottom: 2px;
+}
+
+.acc-calendar-table-wrapper .acc-date-disabled-regular span:after {
+    border-color: transparent transparent #c00 #c00;
+    left: 2px;
+    bottom: 2px;
+}
