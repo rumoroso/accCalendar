@@ -15,7 +15,10 @@ angular.module('ngAccCalendar', [])
             monthModel.month = date.getMonth();
             monthModel.day = date.getDate();
 
-            monthModel.headerRow = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            monthModel.headerRow = {
+                en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                es: ['Lunes', 'martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+            };
             monthModel.dataRows = calendarModel(date);
 
             return monthModel;
@@ -110,7 +113,10 @@ angular.module('ngAccCalendar', [])
         currentMonth = $scope.currentDate.getMonth();
         currentDate = $scope.currentDate.getDate();
 
-        $scope.monthNaming = {'es': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']};
+        $scope.monthNaming = {
+            'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            'es': ['Enero', 'Febero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+        };
 
         if ($scope.configuration.minDate) {
             $scope.configuration.initialDate = $scope.configuration.initialDate >= $scope.configuration.minDate ? $scope.configuration.initialDate : $scope.configuration.minDate;
@@ -534,7 +540,7 @@ angular.module('ngAccCalendar', [])
                         '<caption aria-live="polite" aria-atomic="true" tabindex="0" ng-keydown="nextButton($event)">{{monthNaming["es"][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
                         '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number">w</th>' +
-                        '<th scope="col" ng-repeat="header in calendarModel.headerRow"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
+                        '<th scope="col" ng-repeat="header in calendarModel.headerRow.es"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
                         '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)">' +
                         '<td ng-if="configuration.showWeekNumber" class="add-calendar-week-number">{{firstWeek + $index}}</td>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}">' +
@@ -549,30 +555,7 @@ angular.module('ngAccCalendar', [])
                         '</div>' +
                         '</div>',
                     button = '<button ng-click="showCalendar = !showCalendar"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
-                    wrapper = $compile(template)(scope),
-                    win = angular.element($window);
-
-                $timeout(function () {
-                    scope.elementPosition = scope.elementStyle(element[0]);
-                    console.log(scope.elementPosition)
-                });
-
-
-                function position() {
-
-                    scope.inputPosition = scope.elementStyle(element[0]);
-                    scope.wrapperPosition = scope.elementStyle(wrapper[0]);
-
-                    scope.elementPosition = {
-                        top: scope.inputPosition.top - scope.wrapperPosition.top + scope.inputPosition.height,
-                        left: scope.inputPosition.left - scope.wrapperPosition.left,
-                        width: scope.inputPosition.width
-                        };
-                    console.log(scope.inputPosition)
-                    console.log(scope.elementPosition)
-
-                    return scope.wapperPosition;
-                }
+                    wrapper = $compile(template)(scope);
 
                 element.after(wrapper);
 
@@ -580,7 +563,11 @@ angular.module('ngAccCalendar', [])
                     element.after($compile(button)(scope));
                 }
 
-                win.bind("resize",function(e){
+                $timeout(function () {
+                    scope.elementPosition = scope.elementStyle(element[0]);
+                });
+
+                angular.element($window).bind("resize",function(e){
                     scope.elementPosition = scope.elementStyle(element[0]);
                     scope.$apply();
                 });
