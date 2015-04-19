@@ -1,7 +1,14 @@
+.acc-calendar {
+    display: inline-block;
+    position: absolute;
+    min-width: 270px;
+    max-width: 350px;
+    display: block;
+}
+
 .acc-calendar-table-wrapper {
     position: relative;
     margin-top: 10px;
-    max-width: 300px;
     color: #6f6660;
     background-color: #f5f4f1;
     padding-bottom: 5px;
@@ -42,7 +49,7 @@
 }
 
 .acc-calendar-table-wrapper > span select[ng-model=year] {
-    width: 25%
+    width: 25%;
 }
 
 .acc-calendar-table-wrapper table {
@@ -84,8 +91,7 @@
 .acc-calendar-table-wrapper th.add-calendar-week-number,
 .acc-calendar-table-wrapper td.add-calendar-week-number{
     width: 8%;
-    font-size: .8em;
-    text-align: left;
+    font-size: .7em;
 }
 
 .acc-calendar-table-wrapper td span,
@@ -109,7 +115,6 @@
 .acc-calendar-table-wrapper caption,
 .acc-calendar-table-wrapper select,
 .acc-calendar-table-wrapper td a {
-    -webkit-transition: -webkit-transform .5s;
     transition: transform .5s;
 }
 
@@ -119,7 +124,6 @@
 .acc-calendar-table-wrapper td a:focus {
     background-color: #FFB;
     color: #666;
-    transform: scale(1.2, 1.2);
     transform: scale(1.2, 1.2);
     z-index: 10000;
     box-shadow: 0 0 4px;
