@@ -494,14 +494,6 @@ angular.module('ngAccCalendar', [])
             }
         };
 
-        $scope.elementStyle = function (elem) {
-            return {
-                top: elem.offsetTop || 0,
-                left: elem.offsetLeft || 0,
-                width: elem.offsetWidth,
-                height: elem.offsetHeight
-            }
-        }
     }])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
@@ -549,11 +541,11 @@ angular.module('ngAccCalendar', [])
                 }
 
                 $timeout(function () {
-                    scope.elementPosition = scope.elementStyle(element[0]);
+                    scope.elementPosition = elementStyle(element[0]);
                 });
 
                 angular.element($window).bind("resize", function (e) {
-                    scope.elementPosition = scope.elementStyle(element[0]);
+                    scope.elementPosition = elementStyle(element[0]);
                     scope.$apply();
                 });
 
@@ -584,6 +576,15 @@ angular.module('ngAccCalendar', [])
                         scope.$apply();
                     }
                 });
+
+                function elementStyle (elem) {
+                    return {
+                        top: elem.offsetTop || 0,
+                        left: elem.offsetLeft || 0,
+                        width: elem.offsetWidth,
+                        height: elem.offsetHeight
+                    }
+                }
 
             }
         }
