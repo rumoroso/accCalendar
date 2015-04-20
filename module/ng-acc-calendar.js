@@ -107,7 +107,7 @@ angular.module('ngAccCalendar', [])
         }
     })
 
-    .controller('calendarController', ['$scope', 'calendarModelService', '$window', '$document', function ($scope, calendarModelService, $window, $document) {
+    .controller('calendarController', ['$scope', 'calendarModelService', function ($scope, calendarModelService) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
             minDay = false, minMonth = false, minYear = false,
             maxMonth = false, maxDay = false, maxYear = false;
@@ -494,14 +494,6 @@ angular.module('ngAccCalendar', [])
             }
         };
 
-        $scope.elementStyle = function (elem) {
-            return {
-                top: elem.offsetTop || 0,
-                left: elem.offsetLeft || 0,
-                width: elem.offsetWidth,
-                height: elem.offsetHeight
-            }
-        }
     }])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
@@ -524,7 +516,7 @@ angular.module('ngAccCalendar', [])
                         '<thead><tr>' +
                         '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number">w</th>' +
                         '<th scope="col" ng-repeat="header in calendarModel.headerRow.es"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
-                        '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)">' +
+                        '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)" acc-last-row>' +
                         '<td ng-if="configuration.showWeekNumber" class="add-calendar-week-number">{{firstWeek + $index}}</td>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}">' +
                         '<a role="button" tabindex="0"' +
@@ -549,11 +541,11 @@ angular.module('ngAccCalendar', [])
                 }
 
                 $timeout(function () {
-                    scope.elementPosition = scope.elementStyle(element[0]);
+                    scope.elementPosition = elementStyle(element[0]);
                 });
 
                 angular.element($window).bind("resize", function (e) {
-                    scope.elementPosition = scope.elementStyle(element[0]);
+                    scope.elementPosition = elementStyle(element[0]);
                     scope.$apply();
                 });
 
@@ -584,6 +576,15 @@ angular.module('ngAccCalendar', [])
                         scope.$apply();
                     }
                 });
+
+                function elementStyle (elem) {
+                    return {
+                        top: elem.offsetTop || 0,
+                        left: elem.offsetLeft || 0,
+                        width: elem.offsetWidth,
+                        height: elem.offsetHeight
+                    }
+                }
 
             }
         }
