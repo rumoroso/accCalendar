@@ -1,5 +1,48 @@
 angular.module('ngAccCalendar', [])
-    .factory('calendarModelService', function () {
+    .constant('defaultConfiguration', {
+        visible: false,
+        initialDate: new Date(),
+        yearRange: 20,
+        disableCurrentDate: false,
+        disableWeekends: false,
+        disabledDates: {exceptionDates: [], regularDates: []},
+        setDefaultDate: false,
+        format: 'd/m/yyyy',
+        showWeekNumber: false,
+        minDate: false,
+        maxDate: false
+    })
+    .factory('accCalendarFormatService', function(){
+        return {
+            applyFormat: applyFormat
+        };
+
+        function applyFormat(day, calendarModel, formato) {
+            var fecha_format, inic,
+                month = calendarModel.month + 1,
+                year = calendarModel.year,
+                long_dia = formato.lastIndexOf('d') - formato.indexOf('d') + 1,
+                long_mes = formato.lastIndexOf('m') - formato.indexOf('m') + 1,
+                long_year = formato.lastIndexOf('y') - formato.indexOf('y') + 1;
+
+            long_year = (long_year === 2 || (long_year !== 2 && long_year < 4)) ? 2 : 4;
+            fecha_format = formato;
+
+            day = (day < 10 && long_dia >= 2) ? '0' + day : day;
+            fecha_format = fecha_format.replace('d', day);
+
+            month = (month < 10 && long_mes >= 2) ? '0' + month : month;
+            fecha_format = fecha_format.replace('m', month);
+
+            inic = long_year === 2 ? 2 : 0;
+            fecha_format = fecha_format.replace('y', year.toString().substr(inic, long_year));
+            fecha_format = fecha_format.replace(/(m|d|y)/g, '');
+
+            return fecha_format;
+        }
+
+    })
+    .factory('accCalendarModelService', function () {
         var daysMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
         return {
@@ -17,12 +60,12 @@ angular.module('ngAccCalendar', [])
 
             monthModel.headerRow = {
                 en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                es: ['Lunes', 'martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+                es: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
             };
 
             monthModel.monthNaming = {
                 'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                'es': ['Enero', 'Febero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+                'es': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
             };
 
             monthModel.dataRows = calendarModel(date);
@@ -31,16 +74,10 @@ angular.module('ngAccCalendar', [])
         }
 
         function calendarModel(date) {
-            var month = date.getMonth(),
+            var nDays, starting, total, cont,
+                month = date.getMonth(),
                 year = date.getFullYear(),
-                monthArray = [],
-                daysArray = [],
-                availables = [],
-                nDays, starting, total, lastDayPrevMonth, cont;
-
-            for (cont = 0; cont <= 31; cont++) {
-                availables.push(cont + 'd');
-            }
+                monthArray = [], daysArray = [];
 
             if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
                 daysMonth[1] = 29;
@@ -50,22 +87,10 @@ angular.module('ngAccCalendar', [])
 
             nDays = daysMonth[month];
 
-            //lastDayPrevMonth = month ? daysMonth[month - 1] : daysMonth[daysMonth.length - 1];
-
             date.setDate(1);
-            starting = date.getDay();
-
-            if (starting == 0) {
-                starting = 7;
-            }
+            starting = (date.getDay() === 0) ? 7 : date.getDay();
 
             total = starting + nDays;
-
-            //if(starting) {
-            //    for(cont = starting - 1; cont >= 0; cont--) {
-            //        daysArray.push(lastDayPrevMonth - cont);
-            //    }
-            //}
 
             for (cont = 0; cont < starting - 1; cont++) {
                 daysArray.push('');
@@ -75,9 +100,7 @@ angular.module('ngAccCalendar', [])
                 daysArray.push(cont - starting + 2);
             }
 
-            //cont = 1;
             while (daysArray.length % 7 > 0) {
-                //daysArray.push(cont++);
                 daysArray.push('');
             }
 
@@ -106,13 +129,12 @@ angular.module('ngAccCalendar', [])
             return 1 + ((totalDays - totalDays % 7) / 7) + ((totalDays % 7 >= 8 - date.getDay()) ? 1 : 0);
         }
     })
-
-    .controller('calendarController', ['$scope', 'calendarModelService', function ($scope, calendarModelService) {
+    .controller('accCalendarController', ['$scope', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', function ($scope, accCalendarModelService, defaultConfiguration, accCalendarFormatService) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
             minDay = false, minMonth = false, minYear = false,
             maxMonth = false, maxDay = false, maxYear = false;
 
-        $scope.configuration = setInitialConfiguration($scope.configuration);
+        $scope.configuration = setInitialConfiguration($scope.configuration,defaultConfiguration);
 
         $scope.currentDate = new Date();
         currentYear = $scope.currentDate.getFullYear();
@@ -137,28 +159,14 @@ angular.module('ngAccCalendar', [])
 
         $scope.showCalendar = $scope.configuration.visible;
 
-        $scope.calendarModel = calendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
+        $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
 
         $scope.disabled = setDisabledDate();
 
         $scope.availableYears = $scope.configuration.availableYears;
         $scope.availableMonths = getAvailableMonths($scope.year);
 
-        function setInitialConfiguration(customConfiguration) {
-            var defaultConfiguration = {
-                visible: false,
-                initialDate: new Date(),
-                yearRange: 20,
-                disableCurrentDate: false,
-                disableWeekends: false,
-                disabledDates: {exceptionDates: [], regularDates: []},
-                setDefaultDate: false,
-                format: 'd/m/yyyy',
-                showWeekNumber: false,
-                minDate: false,
-                maxDate: false
-            };
-
+        function setInitialConfiguration(customConfiguration, defaultConfiguration) {
             customConfiguration = customConfiguration ? customConfiguration : {};
             customConfiguration.visible = customConfiguration.visible || defaultConfiguration.visible;
             customConfiguration.initialDate = customConfiguration.initialDate || defaultConfiguration.initialDate;
@@ -191,7 +199,7 @@ angular.module('ngAccCalendar', [])
         }
 
         function getAvailableYears(range, yearReference, minDate, maxDate) {
-            var yearRange = [], start, end;
+            var start, end, yearRange = [];
 
             start = yearReference - range;
             end = yearReference + range;
@@ -216,7 +224,7 @@ angular.module('ngAccCalendar', [])
         }
 
         function getAvailableMonths(year) {
-            var monthRange = [], start, end;
+            var start, end, monthRange = [];
 
             start = (!$scope.configuration.minDate || !($scope.configuration.minDate && ($scope.configuration.minDate.getFullYear()) == year)) ? 0 : $scope.configuration.minDate.getMonth();
             end = (!$scope.configuration.maxDate || !($scope.configuration.maxDate && ($scope.configuration.maxDate.getFullYear()) == year)) ? 11 : $scope.configuration.maxDate.getMonth();
@@ -259,9 +267,9 @@ angular.module('ngAccCalendar', [])
         }
 
         $scope.$watch('[month, year]', function () {
-            $scope.calendarModel = calendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
+            $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
             $scope.availableMonths = getAvailableMonths($scope.year);
-            $scope.firstWeek = calendarModelService.getFirstWeek($scope.year, $scope.month);
+            $scope.firstWeek = accCalendarModelService.getFirstWeek($scope.year, $scope.month);
         });
 
         listenInputField = $scope.$watch('inputField', function () {
@@ -275,10 +283,12 @@ angular.module('ngAccCalendar', [])
             $scope.day = day;
 
             $scope.selectedDate = new Date($scope.calendarModel.year, $scope.calendarModel.month, day);
-            $scope.inputField.val(applyFormat(day, $scope.calendarModel)).triggerHandler('input');
+            $scope.inputField.val(accCalendarFormatService.applyFormat(day, $scope.calendarModel, $scope.configuration.format)).triggerHandler('input');
+
             if (setFocus && !$scope.configuration.visible) {
                 angular.element($scope.inputField)[0].focus();
             }
+
             $scope.showCalendar = $scope.configuration.visible;
 
             selectedYear = $scope.selectedDate.getFullYear();
@@ -286,32 +296,6 @@ angular.module('ngAccCalendar', [])
             selectedDate = $scope.selectedDate.getDate();
 
             $scope.ariaActivedescendant = 'm-' + $scope.calendarModel.month + '_d-' + day;
-
-            function applyFormat(day, calendarModel) {
-                var fecha_format, inic,
-                    month = calendarModel.month + 1,
-                    year = calendarModel.year,
-                    formato = $scope.configuration.format,
-                    long_dia = formato.lastIndexOf('d') - formato.indexOf('d') + 1,
-                    long_mes = formato.lastIndexOf('m') - formato.indexOf('m') + 1,
-                    long_year = formato.lastIndexOf('y') - formato.indexOf('y') + 1;
-
-                long_year = (long_year === 2 || (long_year !== 2 && long_year < 4)) ? 2 : 4;
-                fecha_format = formato;
-
-                day = (day < 10 && long_dia >= 2) ? '0' + day : day;
-                fecha_format = fecha_format.replace('d', day);
-
-                month = (month < 10 && long_mes >= 2) ? '0' + month : month;
-                fecha_format = fecha_format.replace('m', month);
-
-                inic = long_year === 2 ? 2 : 0;
-                fecha_format = fecha_format.replace('y', year.toString().substr(inic, long_year));
-                fecha_format = fecha_format.replace(/(m|d|y)/g, '');
-
-                return fecha_format;
-            }
-
         };
 
         $scope.isMinMonth = function (month) {
@@ -368,8 +352,8 @@ angular.module('ngAccCalendar', [])
             ($scope.configuration.disableCurrentDate && currentDate === day && currentMonth === month && (currentYear) === year) ||
             ($scope.disabled.exceptionDates[year] && $scope.disabled.exceptionDates[year][month] && $scope.disabled.exceptionDates[year][month].indexOf(day) > -1) ||
             ($scope.disabled.regularDates[month] && $scope.disabled.regularDates[month].indexOf(day) > -1));
-
         };
+
 
         $scope.nextButton = function (event) {
             var currentRow, rowsLength, currentCell, currentCalendar, currentColIndex, currentRowIndex, nextButton,
@@ -495,10 +479,10 @@ angular.module('ngAccCalendar', [])
         };
 
     }])
-    .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
+    .directive('accCalendar', ['$compile', '$timeout', '$window', 'accCalendarFormatService', function ($compile, $timeout, $window, accCalendarFormatService) {
         return {
             restrict: 'A',
-            controller: 'calendarController',
+            controller: 'accCalendarController',
             scope: {
                 configuration: '=accCalendar'
             },
@@ -577,7 +561,7 @@ angular.module('ngAccCalendar', [])
                     }
                 });
 
-                function elementStyle (elem) {
+                function elementStyle(elem) {
                     return {
                         top: elem.offsetTop || 0,
                         left: elem.offsetLeft || 0,

@@ -5,7 +5,7 @@ var myApp = angular
     .module('exampleNgAccCalendar', [
         'ngAccCalendar'
     ])
-    .controller('exampleController', function ($scope, calendarModelService) {
+    .controller('exampleController', function ($scope, accCalendarModelService) {
         $scope.configuration = {
             initialDate: new Date(2015, 3, 18),
             yearRange: 5,
