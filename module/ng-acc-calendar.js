@@ -12,7 +12,7 @@ angular.module('ngAccCalendar', [])
         minDate: false,
         maxDate: false
     })
-    .factory('accCalendarFormatService', function(){
+    .factory('accCalendarFormatService', function () {
         return {
             applyFormat: applyFormat
         };
@@ -134,7 +134,7 @@ angular.module('ngAccCalendar', [])
             minDay = false, minMonth = false, minYear = false,
             maxMonth = false, maxDay = false, maxYear = false;
 
-        $scope.configuration = setInitialConfiguration($scope.configuration,defaultConfiguration);
+        $scope.configuration = setInitialConfiguration($scope.configuration, defaultConfiguration);
 
         $scope.currentDate = new Date();
         currentYear = $scope.currentDate.getFullYear();
@@ -500,7 +500,7 @@ angular.module('ngAccCalendar', [])
                         '<thead><tr>' +
                         '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number">w</th>' +
                         '<th scope="col" ng-repeat="header in calendarModel.headerRow.es"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
-                        '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)" acc-last-row>' +
+                        '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)" acc-last-row="test()">' +
                         '<td ng-if="configuration.showWeekNumber" class="add-calendar-week-number">{{firstWeek + $index}}</td>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}">' +
                         '<a role="button" tabindex="0"' +
@@ -517,6 +517,10 @@ angular.module('ngAccCalendar', [])
                         '</div>',
                     button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
                     wrapper = $compile(template)(scope);
+
+                scope.test = function() {
+                    console.log('test');
+                };
 
                 element.after(wrapper);
 
@@ -572,4 +576,15 @@ angular.module('ngAccCalendar', [])
 
             }
         }
-    }]);
+
+    }])
+    .directive('accLastRow', function () {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                if (scope.$last === true) {
+                    scope.$evalAsync(attr.accLastRow);
+                }
+            }
+        }
+    });
