@@ -12,7 +12,7 @@ angular.module('ngAccCalendar', [])
         minDate: false,
         maxDate: false
     })
-    .factory('accCalendarFormatService', function(){
+    .factory('accCalendarFormatService', function () {
         return {
             applyFormat: applyFormat
         };
@@ -129,12 +129,12 @@ angular.module('ngAccCalendar', [])
             return 1 + ((totalDays - totalDays % 7) / 7) + ((totalDays % 7 >= 8 - date.getDay()) ? 1 : 0);
         }
     })
-    .controller('accCalendarController', ['$scope', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', function ($scope, accCalendarModelService, defaultConfiguration, accCalendarFormatService) {
+    .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
             minDay = false, minMonth = false, minYear = false,
             maxMonth = false, maxDay = false, maxYear = false;
 
-        $scope.configuration = setInitialConfiguration($scope.configuration,defaultConfiguration);
+        $scope.configuration = setInitialConfiguration($scope.configuration, defaultConfiguration);
 
         $scope.currentDate = new Date();
         currentYear = $scope.currentDate.getFullYear();
@@ -266,6 +266,7 @@ angular.module('ngAccCalendar', [])
             return tobeDisabled;
         }
 
+
         $scope.$watch('[month, year]', function () {
             $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
             $scope.availableMonths = getAvailableMonths($scope.year);
@@ -307,6 +308,9 @@ angular.module('ngAccCalendar', [])
         };
 
         $scope.rowClass = function (rowIndex, last) {
+            if (last) {
+                $scope.links = $scope.wrapper.find('a');
+            }
             return 'acc-row-' + rowIndex + (last ? ' acc-row-last' : '');
         };
 
@@ -357,64 +361,47 @@ angular.module('ngAccCalendar', [])
 
         $scope.nextButton = function (event) {
             var currentRow, rowsLength, currentCell, currentCalendar, currentColIndex, currentRowIndex, nextButton,
-                c = +$scope.configuration.showWeekNumber ? 1 : 0,
-                caption = false;
+                c = $scope.configuration.showWeekNumber ? 1 : 0;
 
             if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
                 return;
             }
 
             currentCell = angular.element(event.target).parent();
-            if (!currentCell.find('tbody').length) {
-                currentRow = currentCell.parent();
-                currentCalendar = angular.element(currentRow.parent()[0]);
-                rowsLength = currentCalendar.find('tr').length;
-                currentColIndex = parseInt(currentCell.attr('data-index')) + c;
-                currentRowIndex = parseInt(currentRow.attr('data-index'));
-            } else {
-                caption = true;
-                currentCalendar = angular.element(currentCell.find('tbody')[0]);
-                rowsLength = currentCalendar.find('tr').length;
-                currentColIndex = -1;
-                currentRowIndex = -1;
-            }
+            currentRow = currentCell.parent();
+            currentCalendar = angular.element(currentRow.parent()[0]);
+            rowsLength = currentCalendar.find('tr').length;
+            currentColIndex = parseInt(currentCell.attr('data-index')) + c;
+            currentRowIndex = parseInt(currentRow.attr('data-index'));
 
-            if (event.keyCode === 38 && !caption) {
+            if (event.keyCode === 38) {
                 while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
                     currentRowIndex--;
                     nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
                 }
-                if (nextButton && !nextButton.length) {
-                    $scope.caption.focus();
+                if(nextButton.length){
+                    nextButton = nextButton[0];
                 }
-            } else if (event.keyCode === 40 || (caption && event.keyCode === 13)) {
-                if (!caption) {
-                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
-                        currentRowIndex++;
-                        nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                    }
-                } else {
-                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
-                        currentColIndex++;
-                        if (currentColIndex === 7) {
-                            currentColIndex = -1;
-                            currentRowIndex++;
-                        }
-                        nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                    }
+            } else if (event.keyCode === 40) {
+                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
+                    currentRowIndex++;
+                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                }
+                if(nextButton.length){
+                    nextButton = nextButton[0];
                 }
             } else if (event.keyCode === 37) {
-                if (!caption) {
-                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex >= 0)) {
-                        currentColIndex--;
-                        if (currentColIndex === -1) {
-                            currentColIndex = 7;
-                            currentRowIndex--;
-                        }
-                        nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex >= 0)) {
+                    currentColIndex--;
+                    if (currentColIndex === -1) {
+                        currentColIndex = 7;
+                        currentRowIndex--;
                     }
+                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
                 }
-                if (caption || !nextButton || (nextButton && !nextButton.length)) {
+                if(nextButton.length){
+                    nextButton = nextButton[0];
+                }else{
                     if (!minYear || $scope.month > minMonth) {
                         if (!minYear || $scope.year > minYear) {
                             if ($scope.month > 0) {
@@ -423,57 +410,74 @@ angular.module('ngAccCalendar', [])
                                 $scope.month = 11;
                                 $scope.year--;
                             }
+                            $timeout(function () {
+                                $scope.links[$scope.links.length - 1].focus();
+                            });
                         } else {
                             if ($scope.month > 0) {
                                 $scope.month--;
                             }
+                            $timeout(function () {
+                                $scope.links[$scope.links.length - 1].focus();
+                            });
                         }
                     } else {
                         if (!minYear || $scope.year > minYear) {
                             if ($scope.month > 0) {
                                 $scope.month--;
+                                $timeout(function () {
+                                    $scope.links[$scope.links.length - 1].focus();
+                                });
                             } else {
                                 $scope.month = 11;
                                 $scope.year--;
+                                $timeout(function () {
+                                    $scope.links[$scope.links.length - 1].focus();
+                                });
                             }
                         }
                     }
-                    $scope.caption.focus();
                 }
             } else if (event.keyCode === 39) {
-                if (!caption) {
-                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
-                        currentColIndex++;
-                        if ((currentColIndex === 7 && !c) || (c && currentColIndex === 8)) {
-                            currentColIndex = -1;
-                            currentRowIndex++;
-                        }
-                        nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
+                    currentColIndex++;
+                    if ((currentColIndex === 7 && !c) || (c && currentColIndex === 8)) {
+                        currentColIndex = -1;
+                        currentRowIndex++;
                     }
+                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
                 }
-                if (caption || !nextButton || (nextButton && !nextButton.length)) {
+                if(nextButton.length){
+                    nextButton = nextButton[0];
+                }else{
                     if ($scope.month < 11) {
                         if (!maxYear || $scope.year < maxYear) {
                             $scope.month++;
-                            $scope.caption.focus();
+                            $timeout(function () {
+                                $scope.links[0].focus();
+                            });
                         } else {
                             if ($scope.month < maxMonth) {
                                 $scope.month++;
-                                $scope.caption.focus();
+                                $timeout(function () {
+                                    $scope.links[0].focus();
+                                });
                             }
                         }
                     } else {
                         if (!maxYear || $scope.year < maxYear) {
                             $scope.month = 0;
                             $scope.year++;
-                            $scope.caption.focus();
+                            $timeout(function () {
+                                $scope.links[0].focus();
+                            });
                         }
                     }
                 }
             }
 
-            if (nextButton && nextButton.length) {
-                nextButton[0].focus();
+            if (nextButton && nextButton.focus) {
+                nextButton.focus();
                 event.preventDefault();
             }
         };
@@ -496,11 +500,11 @@ angular.module('ngAccCalendar', [])
                         '<option ng-repeat="year in availableYears" value="{{year}}" ng-selected="year === calendarModel.year">{{year}}</option>' +
                         '</select></span>' +
                         '<table ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
-                        '<caption aria-live="polite" aria-atomic="true" tabindex="0" ng-keydown="nextButton($event)">{{calendarModel.monthNaming["es"][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
+                        '<caption aria-live="polite" aria-atomic="true">{{calendarModel.monthNaming["es"][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
                         '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number">w</th>' +
                         '<th scope="col" ng-repeat="header in calendarModel.headerRow.es"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
-                        '<tbody><tr ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="::rowClass($index, $last)" acc-last-row>' +
+                        '<tbody><tr  ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="rowClass($index, $last)" >' +
                         '<td ng-if="configuration.showWeekNumber" class="add-calendar-week-number">{{firstWeek + $index}}</td>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}">' +
                         '<a role="button" tabindex="0"' +
@@ -511,13 +515,14 @@ angular.module('ngAccCalendar', [])
                         ' ng-keydown="nextButton($event)">{{day}}</a>' +
                         '<span ng-if="day && disabledDay(day, $index)" >{{day}}</span>' +
                         '</td>' +
-                        '</tr></tbody>' +
+                        '</tr>' +
                         '</table>' +
                         '</div>' +
                         '</div>',
                     button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
                     wrapper = $compile(template)(scope);
 
+                scope.wrapper = wrapper;
                 element.after(wrapper);
 
                 if (!scope.configuration.visible) {
@@ -534,7 +539,6 @@ angular.module('ngAccCalendar', [])
                 });
 
                 scope.inputField = element;
-                scope.caption = wrapper.find('caption')[0];
 
                 scope.$watch('showCalendar', function (newValue) {
                     if (newValue && !scope.configuration.visible) {
