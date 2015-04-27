@@ -6,3 +6,9 @@
 .acc-calendar-button {
     margin-left: -19px;
 }
+
+.grid {
+    float: left;
+    width: 40%;
+    margin: 0 5%;
+}
