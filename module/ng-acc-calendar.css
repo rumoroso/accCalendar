@@ -121,6 +121,13 @@
     cursor: pointer;
 }
 
+.acc-calendar-table-wrapper td a .acc-calendar-hidden {
+    position: absolute;
+    left: -2000px;
+    top: -2000px;
+    width: auto;
+}
+
 .acc-calendar-table-wrapper td.acc-date-active span,
 .acc-calendar-table-wrapper td.acc-date-active a {
     border: 1px solid red;

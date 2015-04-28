@@ -67,6 +67,7 @@ var myApp = angular
             setDefaultDate: true,
             format: 'd m yyyy',
             showWeekNumber: true,
-            visible: true
+            visible: true,
+            lang: 'em'
         };
     });
