@@ -35,7 +35,7 @@ var myApp = angular
             maxDate: new Date(2016, 4, 10),
             setDefaultDate: true,
             format: 'd m yyyy',
-            //showWeekNumber: true,
+            showWeekNumber: true,
             visible: true
         };
     });
