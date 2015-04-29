@@ -152,12 +152,23 @@ angular.module('ngAccCalendar', [])
     })
     .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
-            minDay = false, minMonth = false, minYear = false,
-            maxMonth = false, maxDay = false, maxYear = false;
+            minDay = minMonth = minYear = maxMonth = maxDay =  maxYear = false;
 
-        $scope.configuration = setInitialConfiguration($scope.configuration, defaultConfiguration);
+        angular.extend($scope, {
+            configuration: setInitialConfiguration($scope.configuration, defaultConfiguration),
+            currentDate: new Date(),
+            selectedDate: $scope.configuration.initialDate,
+            year: $scope.configuration.initialDate.getFullYear(),
+            month: $scope.configuration.initialDate.getMonth(),
+            day: $scope.configuration.initialDate.getDate(),
+            showCalendar: $scope.configuration.visible,
+            calendarModel: accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day),
+            translate: translate,
+            disabled: setDisabledDate(),
+            availableYears: $scope.configuration.availableYears,
+            availableMonths: getAvailableMonths($scope.year)
+        });
 
-        $scope.currentDate = new Date();
         currentYear = $scope.currentDate.getFullYear();
         currentMonth = $scope.currentDate.getMonth();
         currentDate = $scope.currentDate.getDate();
@@ -169,37 +180,21 @@ angular.module('ngAccCalendar', [])
         maxMonth = $scope.configuration.maxDate.getMonth();
         maxDay = $scope.configuration.maxDate.getDate();
 
-        $scope.selectedDate = $scope.configuration.initialDate;
         selectedYear = $scope.selectedDate.getFullYear();
         selectedMonth = $scope.selectedDate.getMonth();
         selectedDate = $scope.selectedDate.getDate();
 
-        $scope.year = $scope.configuration.initialDate.getFullYear();
-        $scope.month = $scope.configuration.initialDate.getMonth();
-        $scope.day = $scope.configuration.initialDate.getDate();
-
-        $scope.showCalendar = $scope.configuration.visible;
-
-        $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
-
-        $scope.translate = translate;
-
-        $scope.disabled = setDisabledDate();
-
-        $scope.availableYears = $scope.configuration.availableYears;
-        $scope.availableMonths = getAvailableMonths($scope.year);
-
         function setInitialConfiguration(customConfiguration, defaultConfiguration) {
             customConfiguration = customConfiguration ? customConfiguration : {};
-            customConfiguration.visible = customConfiguration.visible || defaultConfiguration.visible;
-            customConfiguration.initialDate = customConfiguration.initialDate || defaultConfiguration.initialDate;
-            customConfiguration.yearRange = customConfiguration.yearRange || defaultConfiguration.yearRange;
 
-            customConfiguration.minDate = customConfiguration.minDate || defaultConfiguration.minDate;
-
-            customConfiguration.maxDate = customConfiguration.maxDate || defaultConfiguration.maxDate;
-
-            customConfiguration.availableYears = getAvailableYears(customConfiguration.yearRange, customConfiguration.initialDate.getFullYear(), customConfiguration.minDate, customConfiguration.maxDate);
+            angular.extend(customConfiguration,{
+                visible: customConfiguration.visible || defaultConfiguration.visible,
+                initialDate: customConfiguration.initialDate || defaultConfiguration.initialDate,
+                yearRange: customConfiguration.yearRange || defaultConfiguration.yearRange,
+                minDate: customConfiguration.minDate || defaultConfiguration.minDate,
+                maxDate: customConfiguration.maxDate || defaultConfiguration.maxDate,
+                availableYears: getAvailableYears(customConfiguration.yearRange, customConfiguration.initialDate.getFullYear(), customConfiguration.minDate, customConfiguration.maxDate)
+            });
 
             if (!customConfiguration.minDate) {
                 customConfiguration.minDate = new Date(customConfiguration.availableYears[0], customConfiguration.initialDate.getMonth(), customConfiguration.initialDate.getDate());
@@ -209,13 +204,14 @@ angular.module('ngAccCalendar', [])
                 customConfiguration.maxDate = new Date(customConfiguration.availableYears[customConfiguration.availableYears.length - 1], customConfiguration.initialDate.getMonth(), customConfiguration.initialDate.getDate());
             }
 
-            customConfiguration.disableCurrentDate = customConfiguration.disableCurrentDate || defaultConfiguration.disableCurrentDate;
-            customConfiguration.disableWeekends = customConfiguration.disableWeekends || defaultConfiguration.disableWeekends;
-            customConfiguration.disabledDates = customConfiguration.disabledDates || defaultConfiguration.disabledDates;
-            customConfiguration.setDefaultDate = customConfiguration.setDefaultDate || defaultConfiguration.setDefaultDate;
-            customConfiguration.format = customConfiguration.format || defaultConfiguration.format;
-
-            customConfiguration.lang = customConfiguration.lang || defaultConfiguration.lang;
+            angular.extend(customConfiguration,{
+                disableCurrentDate: customConfiguration.disableCurrentDate || defaultConfiguration.disableCurrentDate,
+                disableWeekends: customConfiguration.disableWeekends || defaultConfiguration.disableWeekends,
+                disabledDates: customConfiguration.disabledDates || defaultConfiguration.disabledDates,
+                setDefaultDate: customConfiguration.setDefaultDate || defaultConfiguration.setDefaultDate,
+                format: customConfiguration.format || defaultConfiguration.format,
+                lang: customConfiguration.lang || defaultConfiguration.lang
+            });
 
             customConfiguration.initialDate = customConfiguration.initialDate >= customConfiguration.minDate ? customConfiguration.initialDate : customConfiguration.minDate;
             customConfiguration.initialDate = customConfiguration.initialDate <= customConfiguration.maxDate ? customConfiguration.initialDate : customConfiguration.maxDate;
