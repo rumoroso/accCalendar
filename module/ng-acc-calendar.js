@@ -152,7 +152,7 @@ angular.module('ngAccCalendar', [])
     })
     .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
-            minDay = minMonth = minYear = maxMonth = maxDay =  maxYear = false;
+            minDay = minMonth = minYear = maxMonth = maxDay = maxYear = false;
 
         angular.extend($scope, {
             configuration: setInitialConfiguration($scope.configuration, defaultConfiguration),
@@ -187,7 +187,7 @@ angular.module('ngAccCalendar', [])
         function setInitialConfiguration(customConfiguration, defaultConfiguration) {
             customConfiguration = customConfiguration ? customConfiguration : {};
 
-            angular.extend(customConfiguration,{
+            angular.extend(customConfiguration, {
                 visible: customConfiguration.visible || defaultConfiguration.visible,
                 initialDate: customConfiguration.initialDate || defaultConfiguration.initialDate,
                 yearRange: customConfiguration.yearRange || defaultConfiguration.yearRange,
@@ -204,7 +204,7 @@ angular.module('ngAccCalendar', [])
                 customConfiguration.maxDate = new Date(customConfiguration.availableYears[customConfiguration.availableYears.length - 1], customConfiguration.initialDate.getMonth(), customConfiguration.initialDate.getDate());
             }
 
-            angular.extend(customConfiguration,{
+            angular.extend(customConfiguration, {
                 disableCurrentDate: customConfiguration.disableCurrentDate || defaultConfiguration.disableCurrentDate,
                 disableWeekends: customConfiguration.disableWeekends || defaultConfiguration.disableWeekends,
                 disabledDates: customConfiguration.disabledDates || defaultConfiguration.disabledDates,
@@ -379,9 +379,138 @@ angular.module('ngAccCalendar', [])
             ($scope.disabled.regularDates[month] && $scope.disabled.regularDates[month].indexOf(day) > -1));
         };
 
-
         $scope.nextButton = function (event) {
-            var currentRow, rowsLength, currentCell, currentCalendar, currentColIndex, currentRowIndex, nextButton;
+            var currentRow, rowsLength, currentCell, currentTableBody, currentColIndex, currentRowIndex,
+                keyMap = {
+                    37: function () {
+                        var nextButton;
+
+                        while (!nextButton || (nextButton && !nextButton.length && currentRowIndex >= 0)) {
+                            currentColIndex--;
+                            if (currentColIndex === -1) {
+                                currentColIndex = 7;
+                                currentRowIndex--;
+                            }
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                        }
+                        if (nextButton.length) {
+                            nextButton = nextButton[0];
+                        } else {
+                            if (!minYear || $scope.month > minMonth) {
+                                if (!minYear || $scope.year > minYear) {
+                                    if ($scope.month > 0) {
+                                        $scope.month--;
+                                    } else {
+                                        $scope.month = 11;
+                                        $scope.year--;
+                                    }
+                                    $timeout(function () {
+                                        $scope.links[$scope.links.length - 1].focus();
+                                    });
+                                } else {
+                                    if ($scope.month > 0) {
+                                        $scope.month--;
+                                    }
+                                    $timeout(function () {
+                                        $scope.links[$scope.links.length - 1].focus();
+                                    });
+                                }
+                            } else {
+                                if (!minYear || $scope.year > minYear) {
+                                    if ($scope.month > 0) {
+                                        $scope.month--;
+                                        $timeout(function () {
+                                            $scope.links[$scope.links.length - 1].focus();
+                                        });
+                                    } else {
+                                        $scope.month = 11;
+                                        $scope.year--;
+                                        $timeout(function () {
+                                            $scope.links[$scope.links.length - 1].focus();
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        if (nextButton && nextButton.focus) {
+                            nextButton.focus();
+                            event.preventDefault();
+                        }
+                    },
+                    38: function () {
+                        var nextButton;
+
+                        while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
+                            currentRowIndex--;
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                        }
+                        if (nextButton.length) {
+                            nextButton = nextButton[0];
+                        }
+                        if (nextButton && nextButton.focus) {
+                            nextButton.focus();
+                            event.preventDefault();
+                        }
+                    },
+                    39: function () {
+                        var nextButton;
+
+                        while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
+                            currentColIndex++;
+                            if (currentColIndex === 7) {
+                                currentColIndex = -1;
+                                currentRowIndex++;
+                            }
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                        }
+                        if (nextButton.length) {
+                            nextButton = nextButton[0];
+                        } else {
+                            if ($scope.month < 11) {
+                                if (!maxYear || $scope.year < maxYear) {
+                                    $scope.month++;
+                                    $timeout(function () {
+                                        $scope.links[0].focus();
+                                    });
+                                } else {
+                                    if ($scope.month < maxMonth) {
+                                        $scope.month++;
+                                        $timeout(function () {
+                                            $scope.links[0].focus();
+                                        });
+                                    }
+                                }
+                            } else {
+                                if (!maxYear || $scope.year < maxYear) {
+                                    $scope.month = 0;
+                                    $scope.year++;
+                                    $timeout(function () {
+                                        $scope.links[0].focus();
+                                    });
+                                }
+                            }
+                        }
+                        if (nextButton && nextButton.focus) {
+                            nextButton.focus();
+                            event.preventDefault();
+                        }
+                    },
+                    40: function () {
+                        var nextButton;
+
+                        while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
+                            currentRowIndex++;
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                        }
+                        if (nextButton.length) {
+                            nextButton = nextButton[0];
+                        }
+                        if (nextButton && nextButton.focus) {
+                            nextButton.focus();
+                            event.preventDefault();
+                        }
+                    }
+                };
 
             if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
                 return;
@@ -389,117 +518,13 @@ angular.module('ngAccCalendar', [])
 
             currentCell = angular.element(event.target).parent();
             currentRow = currentCell.parent();
-            currentCalendar = angular.element(currentRow.parent()[0]);
-            rowsLength = currentCalendar.find('tr').length;
+            currentTableBody = angular.element(currentRow.parent()[0]);
+            rowsLength = currentTableBody.find('tr').length;
             currentColIndex = parseInt(currentCell.attr('data-index'));
             currentRowIndex = parseInt(currentRow.attr('data-index'));
 
-            if (event.keyCode === 38) {
-                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
-                    currentRowIndex--;
-                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                }
-                if (nextButton.length) {
-                    nextButton = nextButton[0];
-                }
-            } else if (event.keyCode === 40) {
-                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
-                    currentRowIndex++;
-                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                }
-                if (nextButton.length) {
-                    nextButton = nextButton[0];
-                }
-            } else if (event.keyCode === 37) {
-                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex >= 0)) {
-                    currentColIndex--;
-                    if (currentColIndex === -1) {
-                        currentColIndex = 7;
-                        currentRowIndex--;
-                    }
-                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                }
-                if (nextButton.length) {
-                    nextButton = nextButton[0];
-                } else {
-                    if (!minYear || $scope.month > minMonth) {
-                        if (!minYear || $scope.year > minYear) {
-                            if ($scope.month > 0) {
-                                $scope.month--;
-                            } else {
-                                $scope.month = 11;
-                                $scope.year--;
-                            }
-                            $timeout(function () {
-                                $scope.links[$scope.links.length - 1].focus();
-                            });
-                        } else {
-                            if ($scope.month > 0) {
-                                $scope.month--;
-                            }
-                            $timeout(function () {
-                                $scope.links[$scope.links.length - 1].focus();
-                            });
-                        }
-                    } else {
-                        if (!minYear || $scope.year > minYear) {
-                            if ($scope.month > 0) {
-                                $scope.month--;
-                                $timeout(function () {
-                                    $scope.links[$scope.links.length - 1].focus();
-                                });
-                            } else {
-                                $scope.month = 11;
-                                $scope.year--;
-                                $timeout(function () {
-                                    $scope.links[$scope.links.length - 1].focus();
-                                });
-                            }
-                        }
-                    }
-                }
-            } else if (event.keyCode === 39) {
-                while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
-                    currentColIndex++;
-                    if (currentColIndex === 7) {
-                        currentColIndex = -1;
-                        currentRowIndex++;
-                    }
-                    nextButton = angular.element(angular.element(currentCalendar.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
-                }
-                if (nextButton.length) {
-                    nextButton = nextButton[0];
-                } else {
-                    if ($scope.month < 11) {
-                        if (!maxYear || $scope.year < maxYear) {
-                            $scope.month++;
-                            $timeout(function () {
-                                $scope.links[0].focus();
-                            });
-                        } else {
-                            if ($scope.month < maxMonth) {
-                                $scope.month++;
-                                $timeout(function () {
-                                    $scope.links[0].focus();
-                                });
-                            }
-                        }
-                    } else {
-                        if (!maxYear || $scope.year < maxYear) {
-                            $scope.month = 0;
-                            $scope.year++;
-                            $timeout(function () {
-                                $scope.links[0].focus();
-                            });
-                        }
-                    }
-                }
-            }
+            keyMap[event.keyCode]();
 
-            if (nextButton && nextButton.focus) {
-                nextButton.focus();
-                event.preventDefault();
-            }
         };
 
     }])
