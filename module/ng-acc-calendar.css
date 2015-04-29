@@ -16,7 +16,7 @@
 }
 
 .acc-calendar-button:hover,
-.acc-calendar-button:focus{
+.acc-calendar-button:focus {
     background-position: center -60px;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .acc-calendar-table-wrapper th.add-calendar-week-number,
-.acc-calendar-table-wrapper td.add-calendar-week-number{
+.acc-calendar-table-wrapper td.add-calendar-week-number {
     width: 8%;
     font-size: .7em;
 }
@@ -121,7 +121,7 @@
     cursor: pointer;
 }
 
-.acc-calendar-table-wrapper td a .acc-calendar-hidden {
+.acc-calendar-table-wrapper .acc-calendar-hidden {
     position: absolute;
     left: -2000px;
     top: -2000px;
