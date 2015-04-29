@@ -152,7 +152,7 @@ angular.module('ngAccCalendar', [])
     })
     .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
-            minDay = minMonth = minYear = maxMonth = maxDay = maxYear = false;
+            minDay, minMonth, minYear, maxMonth, maxDay, maxYear;
 
         angular.extend($scope, {
             configuration: setInitialConfiguration($scope.configuration, defaultConfiguration),
@@ -432,10 +432,7 @@ angular.module('ngAccCalendar', [])
                                 }
                             }
                         }
-                        if (nextButton && nextButton.focus) {
-                            nextButton.focus();
-                            event.preventDefault();
-                        }
+                        triggerEvent(nextButton);
                     },
                     38: function () {
                         var nextButton;
@@ -447,10 +444,7 @@ angular.module('ngAccCalendar', [])
                         if (nextButton.length) {
                             nextButton = nextButton[0];
                         }
-                        if (nextButton && nextButton.focus) {
-                            nextButton.focus();
-                            event.preventDefault();
-                        }
+                        triggerEvent(nextButton);
                     },
                     39: function () {
                         var nextButton;
@@ -490,10 +484,7 @@ angular.module('ngAccCalendar', [])
                                 }
                             }
                         }
-                        if (nextButton && nextButton.focus) {
-                            nextButton.focus();
-                            event.preventDefault();
-                        }
+                        triggerEvent(nextButton);
                     },
                     40: function () {
                         var nextButton;
@@ -505,10 +496,7 @@ angular.module('ngAccCalendar', [])
                         if (nextButton.length) {
                             nextButton = nextButton[0];
                         }
-                        if (nextButton && nextButton.focus) {
-                            nextButton.focus();
-                            event.preventDefault();
-                        }
+                        triggerEvent(nextButton);
                     }
                 };
 
@@ -525,6 +513,12 @@ angular.module('ngAccCalendar', [])
 
             keyMap[event.keyCode]();
 
+            function triggerEvent(nextButton){
+                if (nextButton && nextButton.focus) {
+                    nextButton.focus();
+                    event.preventDefault();
+                }
+            }
         };
 
     }])
