@@ -22,6 +22,14 @@ angular.module('ngAccCalendar', [])
             'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             'es': ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
         },
+        year: {
+            'en': 'year',
+            'es': 'año'
+        },
+        month: {
+            'en': 'month',
+            'es': 'mes'
+        },
         week: {
             'en': 'week',
             'es': 'semana'
@@ -29,6 +37,10 @@ angular.module('ngAccCalendar', [])
         day: {
             'en': 'day',
             'es': 'día'
+        },
+        notAvailable: {
+            'en': 'not available',
+            'es': 'no disponible'
         }
     })
     .factory('accCalendarFormatService', function () {
@@ -505,19 +517,21 @@ angular.module('ngAccCalendar', [])
             link: function (scope, element) {
                 var template = '<div  ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
                         '<div class="acc-calendar-table-wrapper">' +
-                        '<span><select ng-model="month" ng-show="availableMonths.length > 1">' +
+                        '<span><label for="acc_month" ng-show="availableMonths.length > 1"><span class="acc-calendar-hidden">{{translate.month[configuration.lang]}}</span>' +
+                        '<select ng-model="month" id="acc_month">' +
                         '<option ng-repeat="month in availableMonths" value="{{month}}" ng-selected="month === calendarModel.month">{{translate.monthNaming[configuration.lang][month]}}</option>' +
-                        '</select>' +
-                        '<select ng-model="year" ng-show="availableYears.length > 1">' +
+                        '</select></label>' +
+                        '<label for="acc_year" ng-show="availableYears.length > 1"><span class="acc-calendar-hidden">{{translate.year[configuration.lang]}}</span>' +
+                        '<select ng-model="year" id="acc_year">' +
                         '<option ng-repeat="year in availableYears" value="{{year}}" ng-selected="year === calendarModel.year">{{year}}</option>' +
-                        '</select></span>' +
+                        '</select></label></span>' +
                         '<table ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
                         '<caption aria-live="polite" aria-atomic="true">{{translate.monthNaming[configuration.lang][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
                         '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}">{{translate.week[configuration.lang].substr(0, 1)}}.</abbr></th>' +
                         '<th scope="col" ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
                         '<tbody><tr  ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="rowClass($index, $last)" >' +
-                        '<th scope="row" ng-if="configuration.showWeekNumber" class="add-calendar-week-number">{{firstWeek + $index}}</th>' +
+                        '<th scope="row" ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
                         '<a role="button" tabindex="0"' +
                         ' aria-selected="{{isSelectedDate(day)}}"' +
@@ -525,7 +539,7 @@ angular.module('ngAccCalendar', [])
                         ' ng-click="setDate(day, true)" ng-keypress="setDate(day, true)"' +
                         ' ng-if="day && !disabledDay(day, $index)" class="acc-button-date"' +
                         ' ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</a>' +
-                        '<span ng-if="day && disabledDay(day, $index)" >{{day}}</span>' +
+                        '<span ng-if="day && disabledDay(day, $index)" title="{{translate.day[configuration.lang]}} {{translate.notAvailable[configuration.lang]}}">{{day}}</span>' +
                         '</td>' +
                         '</tr>' +
                         '</table>' +

@@ -121,7 +121,7 @@
     cursor: pointer;
 }
 
-.acc-calendar-table-wrapper td a .acc-calendar-hidden {
+.acc-calendar-table-wrapper .acc-calendar-hidden {
     position: absolute;
     left: -2000px;
     top: -2000px;
