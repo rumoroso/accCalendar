@@ -33,10 +33,14 @@ var myApp = angular
             minDate: new Date(2015, 3, 10),
             maxDate: new Date(2016, 4, 10),
             setDefaultDate: true,
-            format: 'd m yyyy'
+            format: 'd m yyyy',
             //showWeekNumber: true,
-            //visible: true
+            //visible: true,
+            onSelect: onSelect,
+            onOpen: function(){console.log('open')},
+            onClose: function(){console.log('close')}
         };
+
         $scope.configuration2 = {
             initialDate: new Date(2015, 3, 18),
             yearRange: 5,
@@ -68,6 +72,12 @@ var myApp = angular
             format: 'd m yyyy',
             showWeekNumber: true,
             visible: true,
-            lang: 'en'
+            lang: 'en',
+            onSelect: onSelect,
+            onOpen: function(){console.log('open')},
+            onClose: function(){console.log('close')}
         };
     });
+
+function onSelect(date){console.log('selectedDate:', date)}
+
