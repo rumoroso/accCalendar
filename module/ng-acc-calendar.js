@@ -393,6 +393,7 @@ angular.module('ngAccCalendar', [])
         $scope.nextButton = function (event) {
             var currentRow, rowsLength, currentCell, currentTableBody, currentColIndex, currentRowIndex,
                 keyMap = {
+                    13: function(){},
                     37: function () {
                         var nextButton;
 
