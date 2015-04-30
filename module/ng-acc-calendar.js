@@ -41,6 +41,14 @@ angular.module('ngAccCalendar', [])
         notAvailable: {
             'en': 'not available',
             'es': 'no disponible'
+        },
+        show: {
+            'en': 'show calendar',
+            'es': 'mostrar calendario'
+        },
+        hide: {
+            'en': 'hide',
+            'es': 'ocultar'
         }
     })
     .factory('accCalendarFormatService', function () {
@@ -294,7 +302,7 @@ angular.module('ngAccCalendar', [])
             $scope.firstWeek = accCalendarModelService.getFirstWeek($scope.year, $scope.month);
         });
 
-        listenInputField = $scope.$watch('inputField', function () {
+        listenInputField = $scope.$watch('inputField', function (newDate, oldDate) {
             if ($scope.configuration.setDefaultDate) {
                 $scope.setDate($scope.day);
             }
@@ -307,10 +315,6 @@ angular.module('ngAccCalendar', [])
             $scope.selectedDate = new Date($scope.calendarModel.year, $scope.calendarModel.month, day);
             $scope.inputField.val(accCalendarFormatService.applyFormat(day, $scope.calendarModel, $scope.configuration.format)).triggerHandler('input');
 
-            if (setFocus) {
-                angular.element($scope.inputField)[0].focus();
-            }
-
             $scope.showCalendar = $scope.configuration.visible;
 
             selectedYear = $scope.selectedDate.getFullYear();
@@ -318,6 +322,13 @@ angular.module('ngAccCalendar', [])
             selectedDate = $scope.selectedDate.getDate();
 
             $scope.ariaActivedescendant = 'm-' + $scope.calendarModel.month + '_d-' + day;
+
+            if (setFocus) {
+                angular.element($scope.inputField)[0].focus();
+                if($scope.configuration.onSelect){
+                    $scope.configuration.onSelect.call($scope.configuration.onSelect, $scope.selectedDate);
+                }
+            }
         };
 
         $scope.isMinMonth = function (month) {
@@ -560,7 +571,7 @@ angular.module('ngAccCalendar', [])
                         '</table>' +
                         '</div>' +
                         '</div>',
-                    button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">show</span><span ng-if="showCalendar">hide</span></button>',
+                    button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">{{translate.show[configuration.lang]}}</span><span ng-if="showCalendar">{{translate.hide[configuration.lang]}}</span></button>',
                     wrapper = $compile(template)(scope);
 
                 scope.wrapper = wrapper;
@@ -581,11 +592,18 @@ angular.module('ngAccCalendar', [])
 
                 scope.inputField = element;
 
-                scope.$watch('showCalendar', function (newValue) {
+                scope.$watch('showCalendar', function (newValue, oldValue) {
                     if (newValue && !scope.configuration.visible) {
                         $timeout(function () {
                             wrapper.find('select')[0].focus();
                         });
+                        if(scope.configuration.onOpen && newValue !== oldValue){
+                            scope.configuration.onOpen();
+                        }
+                    }else if(!newValue){
+                        if(scope.configuration.onClose && newValue !== oldValue){
+                            scope.configuration.onClose();
+                        }
                     }
                 });
 

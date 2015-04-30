@@ -5,7 +5,7 @@ var myApp = angular
     .module('exampleNgAccCalendar', [
         'ngAccCalendar'
     ])
-    .controller('exampleController', function ($scope, accCalendarModelService) {
+    .controller('exampleController', function ($scope) {
         $scope.configuration = {
             initialDate: new Date(2015, 3, 18),
             yearRange: 5,
@@ -36,6 +36,11 @@ var myApp = angular
             setDefaultDate: true,
             format: 'd m yyyy',
             showWeekNumber: true,
-            visible: true
+            visible: false,
+            onSelect: onSelect,
+            onOpen: function(){console.log('open')},
+            onClose: function(){console.log('close')}
         };
     });
+
+function onSelect(date){console.log('selectedDate:', date)};
