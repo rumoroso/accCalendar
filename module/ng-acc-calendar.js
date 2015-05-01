@@ -325,7 +325,7 @@ angular.module('ngAccCalendar', [])
 
             if (setFocus) {
                 angular.element($scope.inputField)[0].focus();
-                if($scope.configuration.onSelect){
+                if ($scope.configuration.onSelect) {
                     $scope.configuration.onSelect.call($scope.configuration.onSelect, $scope.selectedDate);
                 }
             }
@@ -341,7 +341,7 @@ angular.module('ngAccCalendar', [])
 
         $scope.rowClass = function (rowIndex, last) {
             if (last) {
-                $scope.links = $scope.wrapper.find('button');
+                $scope.buttons = $scope.wrapper.find('button');
             }
             return 'acc-row-' + rowIndex + (last ? ' acc-row-last' : '');
         };
@@ -391,124 +391,81 @@ angular.module('ngAccCalendar', [])
         };
 
         $scope.nextButton = function (event) {
-            var currentRow, rowsLength, currentCell, currentTableBody, currentColIndex, currentRowIndex,
+            var nextButton, currentCell, currentRow, currentTableBody, rowsLength, currentColIndex, currentRowIndex,
                 keyMap = {
-                    13: function(){},
+                    13: function () {
+                    },
                     37: function () {
-                        var nextButton;
-
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex >= 0)) {
                             currentColIndex--;
                             if (currentColIndex === -1) {
                                 currentColIndex = 7;
                                 currentRowIndex--;
                             }
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
+                            nextButton = findNext(currentRowIndex, currentColIndex);
                         }
-                        if (nextButton.length) {
-                            nextButton = nextButton[0];
-                        } else {
-                            if (!minYear || $scope.month > minMonth) {
-                                if (!minYear || $scope.year > minYear) {
-                                    if ($scope.month > 0) {
-                                        $scope.month--;
-                                    } else {
-                                        $scope.month = 11;
-                                        $scope.year--;
-                                    }
-                                    $timeout(function () {
-                                        $scope.links[$scope.links.length - 1].focus();
-                                    });
-                                } else {
-                                    if ($scope.month > 0) {
-                                        $scope.month--;
-                                    }
-                                    $timeout(function () {
-                                        $scope.links[$scope.links.length - 1].focus();
-                                    });
-                                }
-                            } else {
-                                if (!minYear || $scope.year > minYear) {
-                                    if ($scope.month > 0) {
-                                        $scope.month--;
-                                        $timeout(function () {
-                                            $scope.links[$scope.links.length - 1].focus();
-                                        });
-                                    } else {
-                                        $scope.month = 11;
-                                        $scope.year--;
-                                        $timeout(function () {
-                                            $scope.links[$scope.links.length - 1].focus();
-                                        });
-                                    }
-                                }
+                        if (!triggerEvent(nextButton)) {
+                            if (prevMonth()) {
+                                $timeout(function () {
+                                    $scope.buttons[$scope.buttons.length - 1].focus();
+                                });
                             }
                         }
-                        triggerEvent(nextButton);
                     },
                     38: function () {
-                        var nextButton;
-
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
                             currentRowIndex--;
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
+                            nextButton = findNext(currentRowIndex, currentColIndex);
                         }
-                        if (nextButton.length) {
-                            nextButton = nextButton[0];
+                        if (!triggerEvent(nextButton)) {
+                            if (prevMonth()) {
+                                $timeout(function () {
+                                    currentRowIndex = currentTableBody.find('tr').length;
+
+                                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
+                                        currentRowIndex--;
+                                        nextButton = findNext(currentRowIndex, currentColIndex);
+                                    }
+                                    return triggerEvent(nextButton);
+                                });
+                            }
                         }
-                        triggerEvent(nextButton);
                     },
                     39: function () {
-                        var nextButton;
-
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength)) {
                             currentColIndex++;
                             if (currentColIndex === 7) {
                                 currentColIndex = -1;
                                 currentRowIndex++;
                             }
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
+                            nextButton = findNext(currentRowIndex, currentColIndex);
                         }
-                        if (nextButton.length) {
-                            nextButton = nextButton[0];
-                        } else {
-                            if ($scope.month < 11) {
-                                if (!maxYear || $scope.year < maxYear) {
-                                    $scope.month++;
-                                    $timeout(function () {
-                                        $scope.links[0].focus();
-                                    });
-                                } else {
-                                    if ($scope.month < maxMonth) {
-                                        $scope.month++;
-                                        $timeout(function () {
-                                            $scope.links[0].focus();
-                                        });
-                                    }
-                                }
-                            } else {
-                                if (!maxYear || $scope.year < maxYear) {
-                                    $scope.month = 0;
-                                    $scope.year++;
-                                    $timeout(function () {
-                                        $scope.links[0].focus();
-                                    });
-                                }
+                        if (!triggerEvent(nextButton)) {
+                            if (nextMonth()) {
+                                $timeout(function () {
+                                    $scope.buttons[0].focus();
+                                });
                             }
                         }
-                        triggerEvent(nextButton);
                     },
                     40: function () {
-                        var nextButton;
-
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
                             currentRowIndex++;
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
+                            nextButton = findNext(currentRowIndex, currentColIndex);
                         }
-                        if (nextButton.length) {
-                            nextButton = nextButton[0];
+                        if (!triggerEvent(nextButton)) {
+                            if (nextMonth()) {
+                                $timeout(function () {
+                                    currentRowIndex = -1;
+
+                                    while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
+                                        currentRowIndex++;
+                                        nextButton = findNext(currentRowIndex, currentColIndex);
+                                    }
+                                    return triggerEvent(nextButton);
+                                });
+                            }
                         }
-                        triggerEvent(nextButton);
                     }
                 };
 
@@ -525,11 +482,57 @@ angular.module('ngAccCalendar', [])
 
             keyMap[event.keyCode]();
 
-            function triggerEvent(nextButton){
-                if (nextButton && nextButton.focus) {
-                    nextButton.focus();
-                    event.preventDefault();
+            function findNext(rowIndex, colIndex) {
+                return angular.element(angular.element(currentTableBody.find('tr')[rowIndex]).find('td')[colIndex]).find('button');
+            }
+
+            function prevMonth() {
+                if ($scope.month > 0) {
+                    if (!minYear || $scope.month > minMonth || $scope.year > minYear) {
+                        $scope.month--;
+                        return true;
+                    }
+                } else {
+                    if (!minYear || $scope.year > minYear) {
+                        $scope.month = 11;
+                        $scope.year--;
+                        return true;
+                    }
                 }
+                return false;
+            }
+
+            function nextMonth() {
+                if ($scope.month < 11) {
+                    if (!maxYear || $scope.year < maxYear) {
+                        $scope.month++;
+                        return true;
+                    } else {
+                        if ($scope.month < maxMonth) {
+                            $scope.month++;
+                            return true;
+                        }
+                    }
+                } else {
+                    if (!maxYear || $scope.year < maxYear) {
+                        $scope.month = 0;
+                        $scope.year++;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function triggerEvent(nextButton) {
+                if (nextButton.length) {
+                    nextButton = nextButton[0];
+                    if (nextButton && nextButton.focus) {
+                        nextButton.focus();
+                        event.preventDefault();
+                    }
+                    return true;
+                }
+                return false;
             }
         };
 
@@ -542,37 +545,37 @@ angular.module('ngAccCalendar', [])
                 configuration: '=accCalendar'
             },
             link: function (scope, element) {
-                var template = '<div  ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
+                var template = '<div data-ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" data-ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
                         '<div class="acc-calendar-table-wrapper">' +
-                        '<span><label for="acc_month" ng-show="availableMonths.length > 1"><span class="acc-calendar-hidden">{{translate.month[configuration.lang]}}</span>' +
-                        '<select ng-model="month" id="acc_month">' +
-                        '<option ng-repeat="month in availableMonths" value="{{month}}" ng-selected="month === calendarModel.month">{{translate.monthNaming[configuration.lang][month]}}</option>' +
+                        '<span><label for="acc_month" data-ng-show="availableMonths.length > 1"><span class="acc-calendar-hidden">{{translate.month[configuration.lang]}}</span>' +
+                        '<select data-ng-model="month" id="acc_month">' +
+                        '<option data-ng-repeat="month in availableMonths" value="{{month}}" data-ng-selected="month === calendarModel.month">{{translate.monthNaming[configuration.lang][month]}}</option>' +
                         '</select></label>' +
-                        '<label for="acc_year" ng-show="availableYears.length > 1"><span class="acc-calendar-hidden">{{translate.year[configuration.lang]}}</span>' +
-                        '<select ng-model="year" id="acc_year">' +
-                        '<option ng-repeat="year in availableYears" value="{{year}}" ng-selected="year === calendarModel.year">{{year}}</option>' +
+                        '<label for="acc_year" data-ng-show="availableYears.length > 1"><span class="acc-calendar-hidden">{{translate.year[configuration.lang]}}</span>' +
+                        '<select data-ng-model="year" id="acc_year">' +
+                        '<option data-ng-repeat="year in availableYears" value="{{year}}" data-ng-selected="year === calendarModel.year">{{year}}</option>' +
                         '</select></label></span>' +
-                        '<table ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
+                        '<table data-ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
                         '<caption aria-live="polite" aria-atomic="true">{{translate.monthNaming[configuration.lang][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
-                        '<th ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}">{{translate.week[configuration.lang].substr(0, 1)}}.</abbr></th>' +
-                        '<th scope="col" ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
-                        '<tbody><tr  ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="rowClass($index, $last)" >' +
-                        '<th scope="row" ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
-                        '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
+                        '<th data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}">{{translate.week[configuration.lang].substr(0, 1)}}.</abbr></th>' +
+                        '<th scope="col" data-ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
+                        '<tbody><tr data-ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" data-ng-class="rowClass($index, $last)" >' +
+                        '<th scope="row" data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
+                        '<td data-ng-repeat="day in semanas track by $index" data-ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
                         '<button tabindex="0"' +
                         ' aria-selected="{{isSelectedDate(day)}}"' +
                         ' id="m-{{month}}_d-{{day}}"' +
-                        ' ng-click="setDate(day, true)" ng-keypress="setDate(day, true)"' +
-                        ' ng-if="day && !disabledDay(day, $index)" class="acc-button-date"' +
-                        ' ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</button>' +
-                        '<span ng-if="day && disabledDay(day, $index)" title="{{translate.day[configuration.lang]}} {{translate.notAvailable[configuration.lang]}}">{{day}}</span>' +
+                        ' data-ng-click="setDate(day, true)" data-ng-keypress="setDate(day, true)"' +
+                        ' data-ng-if="day && !disabledDay(day, $index)" class="acc-button-date"' +
+                        ' data-ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</button>' +
+                        '<span data-ng-if="day && disabledDay(day, $index)" title="{{translate.day[configuration.lang]}} {{translate.notAvailable[configuration.lang]}}">{{day}}</span>' +
                         '</td>' +
                         '</tr>' +
                         '</table>' +
                         '</div>' +
                         '</div>',
-                    button = '<button ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span ng-if="!showCalendar">{{translate.show[configuration.lang]}}</span><span ng-if="showCalendar">{{translate.hide[configuration.lang]}}</span></button>',
+                    button = '<button data-ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span data-ng-if="!showCalendar">{{translate.show[configuration.lang]}}</span><span data-ng-if="showCalendar">{{translate.hide[configuration.lang]}}</span></button>',
                     wrapper = $compile(template)(scope);
 
                 scope.wrapper = wrapper;
@@ -598,11 +601,11 @@ angular.module('ngAccCalendar', [])
                         $timeout(function () {
                             wrapper.find('select')[0].focus();
                         });
-                        if(scope.configuration.onOpen && newValue !== oldValue){
+                        if (scope.configuration.onOpen && newValue !== oldValue) {
                             scope.configuration.onOpen();
                         }
-                    }else if(!newValue){
-                        if(scope.configuration.onClose && newValue !== oldValue){
+                    } else if (!newValue) {
+                        if (scope.configuration.onClose && newValue !== oldValue) {
                             scope.configuration.onClose();
                         }
                     }
