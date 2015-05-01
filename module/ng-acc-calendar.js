@@ -341,7 +341,7 @@ angular.module('ngAccCalendar', [])
 
         $scope.rowClass = function (rowIndex, last) {
             if (last) {
-                $scope.links = $scope.wrapper.find('a');
+                $scope.links = $scope.wrapper.find('button');
             }
             return 'acc-row-' + rowIndex + (last ? ' acc-row-last' : '');
         };
@@ -403,7 +403,7 @@ angular.module('ngAccCalendar', [])
                                 currentColIndex = 7;
                                 currentRowIndex--;
                             }
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
                         }
                         if (nextButton.length) {
                             nextButton = nextButton[0];
@@ -451,7 +451,7 @@ angular.module('ngAccCalendar', [])
 
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex > 0)) {
                             currentRowIndex--;
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
                         }
                         if (nextButton.length) {
                             nextButton = nextButton[0];
@@ -467,7 +467,7 @@ angular.module('ngAccCalendar', [])
                                 currentColIndex = -1;
                                 currentRowIndex++;
                             }
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
                         }
                         if (nextButton.length) {
                             nextButton = nextButton[0];
@@ -503,7 +503,7 @@ angular.module('ngAccCalendar', [])
 
                         while (!nextButton || (nextButton && !nextButton.length && currentRowIndex < rowsLength - 1)) {
                             currentRowIndex++;
-                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('a');
+                            nextButton = angular.element(angular.element(currentTableBody.find('tr')[currentRowIndex]).find('td')[currentColIndex]).find('button');
                         }
                         if (nextButton.length) {
                             nextButton = nextButton[0];
@@ -560,12 +560,12 @@ angular.module('ngAccCalendar', [])
                         '<tbody><tr  ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" ng-class="rowClass($index, $last)" >' +
                         '<th scope="row" ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
                         '<td ng-repeat="day in semanas track by $index" ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
-                        '<a role="button" tabindex="0"' +
+                        '<button tabindex="0"' +
                         ' aria-selected="{{isSelectedDate(day)}}"' +
                         ' id="m-{{month}}_d-{{day}}"' +
                         ' ng-click="setDate(day, true)" ng-keypress="setDate(day, true)"' +
                         ' ng-if="day && !disabledDay(day, $index)" class="acc-button-date"' +
-                        ' ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</a>' +
+                        ' ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</button>' +
                         '<span ng-if="day && disabledDay(day, $index)" title="{{translate.day[configuration.lang]}} {{translate.notAvailable[configuration.lang]}}">{{day}}</span>' +
                         '</td>' +
                         '</tr>' +
