@@ -42,6 +42,10 @@ angular.module('ngAccCalendar', [])
             'en': 'not available',
             'es': 'no disponible'
         },
+        selectedDate: {
+            'en': 'selected date',
+            'es': 'fecha seleccionada'
+        },
         show: {
             'en': 'show calendar',
             'es': 'mostrar calendario'
@@ -568,7 +572,7 @@ angular.module('ngAccCalendar', [])
                         ' id="m-{{month}}_d-{{day}}"' +
                         ' data-ng-click="setDate(day, true)" data-ng-keypress="setDate(day, true)"' +
                         ' data-ng-if="day && !disabledDay(day, $index)" class="acc-button-date"' +
-                        ' data-ng-keydown="nextButton($event)"><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}}</span>{{day}}</button>' +
+                        ' data-ng-keydown="nextButton($event)"><span data-ng-if="isSelectedDate(day)" class="acc-calendar-hidden">{{translate.selectedDate[configuration.lang]}} </span><span class="acc-calendar-hidden">{{translate.day[configuration.lang]}} </span>{{day}}</button>' +
                         '<span data-ng-if="day && disabledDay(day, $index)" title="{{translate.day[configuration.lang]}} {{translate.notAvailable[configuration.lang]}}">{{day}}</span>' +
                         '</td>' +
                         '</tr>' +
