@@ -6,10 +6,21 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="../module/ng-acc-calendar.css"/>
+    <style>
+        input {
+            display: inline-block
+        }
+        input.toDate {
+            margin-left: 100px;
+        }
+    </style>
 </head>
 <body ng-controller="exampleController">
-<input acc-calendar="configuration" type="text"/>
-
+<!--<input acc-calendar="configuration" type="text"/>-->
+<div acc-calendar-range="configurationRange">
+<input acc-calendar="configurationRange.fromDate" type="text"/>
+<input acc-calendar="configurationRange.toDate" type="text" class="toDate"/>
+</div>
     <!-- bower:js -->
 <script src="../bower_components/angular/angular.js"></script>
 <!-- endbower -->

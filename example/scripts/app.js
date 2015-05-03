@@ -36,10 +36,24 @@ var myApp = angular
             setDefaultDate: true,
             format: 'd m yyyy',
             showWeekNumber: true,
-            visible: false,
+            visible: true,
             onSelect: onSelect,
             onOpen: function(){console.log('open')},
-            onClose: function(){console.log('close')}
+            onClose: function(){console.log('close')},
+            range: true
+        };
+
+        $scope.configurationRange = {
+            fromDate: {
+                setDefaultDate: false,
+                visible: true,
+                yearRange: 2
+            },
+            toDate: {
+                setDefaultDate: false,
+                visible: true,
+                yearRange: 2
+            }
         };
     });
 
