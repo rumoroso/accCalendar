@@ -1,4 +1,5 @@
 angular.module('ngAccCalendar', [])
+angular.module('ngAccCalendar', [])
     .constant('defaultConfiguration', {
         visible: false,
         initialDate: new Date(),
@@ -11,7 +12,8 @@ angular.module('ngAccCalendar', [])
         showWeekNumber: false,
         minDate: false,
         maxDate: false,
-        lang: 'es'
+        lang: 'es',
+        range: false
     })
     .constant('translate', {
         headerRow: {
@@ -169,16 +171,19 @@ angular.module('ngAccCalendar', [])
         angular.extend($scope, {
             configuration: setInitialConfiguration($scope.configuration, defaultConfiguration),
             currentDate: new Date(),
+            calendarModel: accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day),
+            translate: translate,
+            disabled: setDisabledDate(),
+            availableMonths: getAvailableMonths($scope.year)
+        });
+
+        angular.extend($scope, {
             selectedDate: $scope.configuration.initialDate,
             year: $scope.configuration.initialDate.getFullYear(),
             month: $scope.configuration.initialDate.getMonth(),
             day: $scope.configuration.initialDate.getDate(),
             showCalendar: $scope.configuration.visible,
-            calendarModel: accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day),
-            translate: translate,
-            disabled: setDisabledDate(),
-            availableYears: $scope.configuration.availableYears,
-            availableMonths: getAvailableMonths($scope.year)
+            availableYears: $scope.configuration.availableYears
         });
 
         currentYear = $scope.currentDate.getFullYear();
@@ -205,6 +210,10 @@ angular.module('ngAccCalendar', [])
                 yearRange: customConfiguration.yearRange || defaultConfiguration.yearRange,
                 minDate: customConfiguration.minDate || defaultConfiguration.minDate,
                 maxDate: customConfiguration.maxDate || defaultConfiguration.maxDate,
+                range: customConfiguration.range || defaultConfiguration.range
+            });
+
+            angular.extend(customConfiguration, {
                 availableYears: getAvailableYears(customConfiguration.yearRange, customConfiguration.initialDate.getFullYear(), customConfiguration.minDate, customConfiguration.maxDate)
             });
 
@@ -231,6 +240,7 @@ angular.module('ngAccCalendar', [])
             return customConfiguration;
         }
 
+        $scope.getAvailableYears = getAvailableYears;
         function getAvailableYears(range, yearReference, minDate, maxDate) {
             var start, end, yearRange = [];
 
@@ -299,11 +309,33 @@ angular.module('ngAccCalendar', [])
             return tobeDisabled;
         }
 
-
-        $scope.$watch('[month, year]', function () {
+        $scope.$watch('[month, year]', function (newValue) {
             $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
             $scope.availableMonths = getAvailableMonths($scope.year);
             $scope.firstWeek = accCalendarModelService.getFirstWeek($scope.year, $scope.month);
+        });
+
+        $scope.$watch('[configuration.minDate]', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                $timeout(function () {
+                    var year = $scope.configuration.minDate.getFullYear(),
+                        month = $scope.configuration.minDate.getMonth(),
+                        day = $scope.configuration.minDate.getDate();
+
+                    $scope.setDate(day);
+                    $scope.calendarModel = accCalendarModelService.getCalendarModel(year, month, day);
+                    $scope.month = selectedMonth;
+                    $scope.year = selectedYear;
+                    minYear = selectedYear;
+                    minMonth = selectedMonth;
+                    minDay = day;
+                    $scope.availableMonths= getAvailableMonths(year);
+                    $scope.availableYears= getAvailableYears($scope.configuration.yearRange, minYear, $scope.configuration.minDate, $scope.configuration.maxDate);
+                    selectedYear = $scope.selectedDate.getFullYear();
+                    selectedMonth = $scope.selectedDate.getMonth();
+                    selectedDate = $scope.selectedDate.getDate();
+                });
+            }
         });
 
         listenInputField = $scope.$watch('inputField', function (newDate, oldDate) {
@@ -333,6 +365,8 @@ angular.module('ngAccCalendar', [])
                     $scope.configuration.onSelect.call($scope.configuration.onSelect, $scope.selectedDate);
                 }
             }
+
+            $scope.configuration.initialDate = $scope.selectedDate;
         };
 
         $scope.isMinMonth = function (month) {
@@ -539,7 +573,6 @@ angular.module('ngAccCalendar', [])
                 return false;
             }
         };
-
     }])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
@@ -641,6 +674,28 @@ angular.module('ngAccCalendar', [])
                     }
                 }
 
+            }
+        }
+    }])
+    .directive('accCalendarRange', [function () {
+        return {
+            restrict: 'A',
+            controller: function ($scope) {
+
+                $scope.$watch('rangeConfiguration.fromDate.initialDate', function (newDate, oldDate) {
+                    $scope.rangeConfiguration.toDate.minDate = new Date (newDate.getFullYear(), newDate.getMonth() + 1, 1);
+                });
+
+            },
+            scope: {
+                rangeConfiguration: '=accCalendarRange'
+            },
+            link: function (scope, element) {
+                var inputs = angular.element(element).find('input');
+                scope.fromDateInput = angular.element(inputs[0]).scope().$$childTail;
+                scope.toDateInput = angular.element(inputs[1]).scope().$$childTail;
+
+                scope.toDateInput.availableYears = scope.toDateInput.getAvailableYears(scope.toDateInput.configuration.yearRange, scope.fromDateInput.selectedDate.getFullYear(), scope.fromDateInput.selectedDate, scope.toDateInput.maxDate)
             }
         }
     }]);
