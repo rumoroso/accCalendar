@@ -77,6 +77,19 @@ var myApp = angular
             onOpen: function(){console.log('open')},
             onClose: function(){console.log('close')}
         };
+
+        $scope.configurationRange = {
+            fromDate: {
+                setDefaultDate: false,
+                visible: true,
+                yearRange: 2
+            },
+            toDate: {
+                setDefaultDate: false,
+                visible: true,
+                yearRange: 2
+            }
+        };
     });
 
 function onSelect(date){console.log('selectedDate:', date)}
