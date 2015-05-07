@@ -51,8 +51,8 @@ angular.module('ngAccCalendar', [])
             'es': 'mostrar calendario'
         },
         hide: {
-            'en': 'hide',
-            'es': 'ocultar'
+            'en': 'hide calendar',
+            'es': 'ocultar calendario'
         }
     })
     .factory('accCalendarFormatService', function () {
