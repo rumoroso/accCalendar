@@ -1,3 +1,18 @@
+var KEYS = {
+    "BACKSPACE": 8,
+    "TAB": 9,
+    "ENTER": 13,
+    "ESCAPE": 27,
+    "SPACE": 32,
+    "END": 35,
+    "HOME": 36,
+    "LEFT_ARROW": 37,
+    "UP_ARROW": 38,
+    "RIGHT_ARROW": 39,
+    "DOWN_ARROW": 40,
+    "DELETE": 46
+};
+
 angular.module('ngAccCalendar', [])
     .constant('defaultConfiguration', {
         visible: false,
@@ -13,6 +28,7 @@ angular.module('ngAccCalendar', [])
         maxDate: false,
         lang: 'es'
     })
+    .constant('KEYS', KEYS)
     .constant('translate', {
         headerRow: {
             en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -162,7 +178,7 @@ angular.module('ngAccCalendar', [])
             return 1 + ((totalDays - totalDays % 7) / 7) + ((totalDays % 7 >= 8 - date.getDay()) ? 1 : 0);
         }
     })
-    .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate) {
+    .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', 'KEYS', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate, KEYS) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
             minDay, minMonth, minYear, maxMonth, maxDay, maxYear;
 
@@ -478,8 +494,8 @@ angular.module('ngAccCalendar', [])
                         }
                     }
                 };
-
-            if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+                
+            if (event.keyCode !== KEYS.ENTER && event.keyCode !== KEYS.LEFT_ARROW && event.keyCode !== KEYS.UP_ARROW && event.keyCode !== KEYS.RIGHT_ARROW && event.keyCode !== KEYS.DOWN_ARROW) {
                 return;
             }
 
