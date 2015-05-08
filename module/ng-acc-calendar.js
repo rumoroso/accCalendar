@@ -412,6 +412,9 @@ angular.module('ngAccCalendar', [])
                             if (prevMonth()) {
                                 $timeout(function () {
                                     $scope.buttons[$scope.buttons.length - 1].focus();
+                                    if($scope.buttons.length) {
+                                        event.preventDefault();
+                                    }
                                 });
                             }
                         }
@@ -448,6 +451,9 @@ angular.module('ngAccCalendar', [])
                             if (nextMonth()) {
                                 $timeout(function () {
                                     $scope.buttons[0].focus();
+                                    if($scope.buttons.length) {
+                                        event.preventDefault();
+                                    }
                                 });
                             }
                         }
