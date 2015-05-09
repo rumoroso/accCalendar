@@ -136,7 +136,7 @@ angular.module('ngAccCalendar', [])
 
             nDays = daysMonth[month];
 
-            date.setDate(1);
+            //date.setDate(1);
             starting = (date.getDay() === 0) ? 7 : date.getDay();
 
             total = starting + nDays;
@@ -582,8 +582,8 @@ angular.module('ngAccCalendar', [])
                         '<table data-ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
                         '<caption aria-live="polite" aria-atomic="true">{{translate.monthNaming[configuration.lang][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
-                        '<th data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}">{{translate.week[configuration.lang].substr(0, 1)}}.</abbr></th>' +
-                        '<th scope="col" data-ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
+                        '<th data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}"><span>{{translate.week[configuration.lang]}}</span></th>' +
+                        '<th scope="col" data-ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><span>{{header}}</span></th></tr></thead>' +
                         '<tbody><tr data-ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" data-ng-class="rowClass($index, $last)" >' +
                         '<th scope="row" data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
                         '<td data-ng-repeat="day in semanas track by $index" data-ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
