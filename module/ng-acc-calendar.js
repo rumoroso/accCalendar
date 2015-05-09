@@ -1,4 +1,18 @@
-angular.module('ngAccCalendar', [])
+var KEYS = {
+    "BACKSPACE": 8,
+    "TAB": 9,
+    "ENTER": 13,
+    "ESCAPE": 27,
+    "SPACE": 32,
+    "END": 35,
+    "HOME": 36,
+    "LEFT_ARROW": 37,
+    "UP_ARROW": 38,
+    "RIGHT_ARROW": 39,
+    "DOWN_ARROW": 40,
+    "DELETE": 46
+};
+
 angular.module('ngAccCalendar', [])
     .constant('defaultConfiguration', {
         visible: false,
@@ -12,9 +26,9 @@ angular.module('ngAccCalendar', [])
         showWeekNumber: false,
         minDate: false,
         maxDate: false,
-        lang: 'es',
-        range: false
+        lang: 'es'
     })
+    .constant('KEYS', KEYS)
     .constant('translate', {
         headerRow: {
             en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -53,8 +67,8 @@ angular.module('ngAccCalendar', [])
             'es': 'mostrar calendario'
         },
         hide: {
-            'en': 'hide',
-            'es': 'ocultar'
+            'en': 'hide calendar',
+            'es': 'ocultar calendario'
         }
     })
     .factory('accCalendarFormatService', function () {
@@ -164,26 +178,23 @@ angular.module('ngAccCalendar', [])
             return 1 + ((totalDays - totalDays % 7) / 7) + ((totalDays % 7 >= 8 - date.getDay()) ? 1 : 0);
         }
     })
-    .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate) {
+    .controller('accCalendarController', ['$scope', '$timeout', 'accCalendarModelService', 'defaultConfiguration', 'accCalendarFormatService', 'translate', 'KEYS', function ($scope, $timeout, accCalendarModelService, defaultConfiguration, accCalendarFormatService, translate, KEYS) {
         var currentYear, currentMonth, currentDate, selectedYear, selectedMonth, selectedDate, listenInputField,
             minDay, minMonth, minYear, maxMonth, maxDay, maxYear;
 
         angular.extend($scope, {
             configuration: setInitialConfiguration($scope.configuration, defaultConfiguration),
             currentDate: new Date(),
-            calendarModel: accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day),
-            translate: translate,
-            disabled: setDisabledDate(),
-            availableMonths: getAvailableMonths($scope.year)
-        });
-
-        angular.extend($scope, {
             selectedDate: $scope.configuration.initialDate,
             year: $scope.configuration.initialDate.getFullYear(),
             month: $scope.configuration.initialDate.getMonth(),
             day: $scope.configuration.initialDate.getDate(),
             showCalendar: $scope.configuration.visible,
-            availableYears: $scope.configuration.availableYears
+            calendarModel: accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day),
+            translate: translate,
+            disabled: setDisabledDate(),
+            availableYears: $scope.configuration.availableYears,
+            availableMonths: getAvailableMonths($scope.year)
         });
 
         currentYear = $scope.currentDate.getFullYear();
@@ -210,10 +221,6 @@ angular.module('ngAccCalendar', [])
                 yearRange: customConfiguration.yearRange || defaultConfiguration.yearRange,
                 minDate: customConfiguration.minDate || defaultConfiguration.minDate,
                 maxDate: customConfiguration.maxDate || defaultConfiguration.maxDate,
-                range: customConfiguration.range || defaultConfiguration.range
-            });
-
-            angular.extend(customConfiguration, {
                 availableYears: getAvailableYears(customConfiguration.yearRange, customConfiguration.initialDate.getFullYear(), customConfiguration.minDate, customConfiguration.maxDate)
             });
 
@@ -240,7 +247,6 @@ angular.module('ngAccCalendar', [])
             return customConfiguration;
         }
 
-        $scope.getAvailableYears = getAvailableYears;
         function getAvailableYears(range, yearReference, minDate, maxDate) {
             var start, end, yearRange = [];
 
@@ -309,33 +315,11 @@ angular.module('ngAccCalendar', [])
             return tobeDisabled;
         }
 
-        $scope.$watch('[month, year]', function (newValue) {
+
+        $scope.$watch('[month, year]', function () {
             $scope.calendarModel = accCalendarModelService.getCalendarModel($scope.year, $scope.month, $scope.day);
             $scope.availableMonths = getAvailableMonths($scope.year);
             $scope.firstWeek = accCalendarModelService.getFirstWeek($scope.year, $scope.month);
-        });
-
-        $scope.$watch('[configuration.minDate]', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $timeout(function () {
-                    var year = $scope.configuration.minDate.getFullYear(),
-                        month = $scope.configuration.minDate.getMonth(),
-                        day = $scope.configuration.minDate.getDate();
-
-                    $scope.setDate(day);
-                    $scope.calendarModel = accCalendarModelService.getCalendarModel(year, month, day);
-                    $scope.month = selectedMonth;
-                    $scope.year = selectedYear;
-                    minYear = selectedYear;
-                    minMonth = selectedMonth;
-                    minDay = day;
-                    $scope.availableMonths= getAvailableMonths(year);
-                    $scope.availableYears= getAvailableYears($scope.configuration.yearRange, minYear, $scope.configuration.minDate, $scope.configuration.maxDate);
-                    selectedYear = $scope.selectedDate.getFullYear();
-                    selectedMonth = $scope.selectedDate.getMonth();
-                    selectedDate = $scope.selectedDate.getDate();
-                });
-            }
         });
 
         listenInputField = $scope.$watch('inputField', function (newDate, oldDate) {
@@ -365,8 +349,6 @@ angular.module('ngAccCalendar', [])
                     $scope.configuration.onSelect.call($scope.configuration.onSelect, $scope.selectedDate);
                 }
             }
-
-            $scope.configuration.initialDate = $scope.selectedDate;
         };
 
         $scope.isMinMonth = function (month) {
@@ -447,6 +429,7 @@ angular.module('ngAccCalendar', [])
                                 $timeout(function () {
                                     $scope.buttons[$scope.buttons.length - 1].focus();
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -466,6 +449,7 @@ angular.module('ngAccCalendar', [])
                                     }
                                     return triggerEvent(nextButton);
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -483,6 +467,7 @@ angular.module('ngAccCalendar', [])
                                 $timeout(function () {
                                     $scope.buttons[0].focus();
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -502,12 +487,13 @@ angular.module('ngAccCalendar', [])
                                     }
                                     return triggerEvent(nextButton);
                                 });
+                                event.preventDefault();
                             }
                         }
                     }
                 };
 
-            if (event.keyCode !== 13 && event.keyCode !== 37 && event.keyCode !== 38 && event.keyCode !== 39 && event.keyCode !== 40) {
+            if (event.keyCode !== KEYS.ENTER && event.keyCode !== KEYS.LEFT_ARROW && event.keyCode !== KEYS.UP_ARROW && event.keyCode !== KEYS.RIGHT_ARROW && event.keyCode !== KEYS.DOWN_ARROW) {
                 return;
             }
 
@@ -573,6 +559,7 @@ angular.module('ngAccCalendar', [])
                 return false;
             }
         };
+
     }])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
@@ -674,28 +661,6 @@ angular.module('ngAccCalendar', [])
                     }
                 }
 
-            }
-        }
-    }])
-    .directive('accCalendarRange', [function () {
-        return {
-            restrict: 'A',
-            controller: function ($scope) {
-
-                $scope.$watch('rangeConfiguration.fromDate.initialDate', function (newDate, oldDate) {
-                    $scope.rangeConfiguration.toDate.minDate = new Date (newDate.getFullYear(), newDate.getMonth() + 1, 1);
-                });
-
-            },
-            scope: {
-                rangeConfiguration: '=accCalendarRange'
-            },
-            link: function (scope, element) {
-                var inputs = angular.element(element).find('input');
-                scope.fromDateInput = angular.element(inputs[0]).scope().$$childTail;
-                scope.toDateInput = angular.element(inputs[1]).scope().$$childTail;
-
-                scope.toDateInput.availableYears = scope.toDateInput.getAvailableYears(scope.toDateInput.configuration.yearRange, scope.fromDateInput.selectedDate.getFullYear(), scope.fromDateInput.selectedDate, scope.toDateInput.maxDate)
             }
         }
     }]);
