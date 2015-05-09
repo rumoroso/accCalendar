@@ -428,10 +428,8 @@ angular.module('ngAccCalendar', [])
                             if (prevMonth()) {
                                 $timeout(function () {
                                     $scope.buttons[$scope.buttons.length - 1].focus();
-                                    if($scope.buttons.length) {
-                                        event.preventDefault();
-                                    }
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -451,6 +449,7 @@ angular.module('ngAccCalendar', [])
                                     }
                                     return triggerEvent(nextButton);
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -467,10 +466,8 @@ angular.module('ngAccCalendar', [])
                             if (nextMonth()) {
                                 $timeout(function () {
                                     $scope.buttons[0].focus();
-                                    if($scope.buttons.length) {
-                                        event.preventDefault();
-                                    }
                                 });
+                                event.preventDefault();
                             }
                         }
                     },
@@ -490,11 +487,12 @@ angular.module('ngAccCalendar', [])
                                     }
                                     return triggerEvent(nextButton);
                                 });
+                                event.preventDefault();
                             }
                         }
                     }
                 };
-                
+
             if (event.keyCode !== KEYS.ENTER && event.keyCode !== KEYS.LEFT_ARROW && event.keyCode !== KEYS.UP_ARROW && event.keyCode !== KEYS.RIGHT_ARROW && event.keyCode !== KEYS.DOWN_ARROW) {
                 return;
             }
