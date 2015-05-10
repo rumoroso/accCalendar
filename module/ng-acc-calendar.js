@@ -136,7 +136,7 @@ angular.module('ngAccCalendar', [])
 
             nDays = daysMonth[month];
 
-            //date.setDate(1);
+            date.setDate(1);
             starting = (date.getDay() === 0) ? 7 : date.getDay();
 
             total = starting + nDays;
