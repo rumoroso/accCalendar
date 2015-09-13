@@ -564,11 +564,12 @@ angular.module('ngAccCalendar', [])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
             restrict: 'A',
+            require: '?ngModel',
             controller: 'accCalendarController',
             scope: {
                 configuration: '=accCalendar'
             },
-            link: function (scope, element) {
+            link: function (scope, element, iAttrs, ngModelCtrl) {
                 var template = '<div data-ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" data-ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
                         '<div class="acc-calendar-table-wrapper">' +
                         '<span><label for="acc_month" data-ng-show="availableMonths.length > 1"><span class="acc-calendar-hidden">{{translate.month[configuration.lang]}}</span>' +
@@ -651,6 +652,21 @@ angular.module('ngAccCalendar', [])
                         scope.$apply();
                     }
                 });
+
+                if (ngModelCtrl) {
+
+                    // set the input field value when the model changes
+                    ngModelCtrl.$formatters.push(function (value) {
+                            return value;
+                        }
+                    );
+
+                    // to set the model as date object
+                    ngModelCtrl.$parsers.push(function (value) {
+                        return value;
+                    });
+
+                }
 
                 function elementStyle(elem) {
                     return {
