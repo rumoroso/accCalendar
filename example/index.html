@@ -5,25 +5,21 @@
     <title ng-bind="title"></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="../module/ng-acc-calendar.css"/>
+    <link rel="stylesheet" href="../src/ng-acc-calendar.css"/>
+    <link rel="stylesheet" href="app.css"/>
 </head>
 <body ng-controller="exampleController">
-<input acc-calendar="configuration" type="text" ng-model="datemodel"/>
-<br>
-Fecha seleccionada: {{datemodel}}
-
-    <!-- bower:js -->
-<script src="../node_modules/angular/angular.js"></script>
-<!-- endbower -->
-
-
-<script src="../module/ng-acc-calendar.js"></script>
-
-<!-- endbuild -->
-
-<!-- build:js({.tmp,app}) scripts/scripts.js -->
-<script src="scripts/app.js"></script>
-<!-- endbuild -->
-
+    <a href="https://github.com/rumoroso/ngAccCalendar/wiki">ngAccCalendar Wiki</a>
+    <div class="content">
+<div class="grid">
+    <input acc-calendar="configuration1" type="text" class="calendar"/>
+</div>
+<div class="grid">
+    <input acc-calendar="configuration2" type="text" class="calendar"/>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+<script src="../src/ng-acc-calendar.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
