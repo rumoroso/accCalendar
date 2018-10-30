@@ -600,7 +600,8 @@ angular.module('ngAccCalendar', [])
                         '</table>' +
                         '</div>' +
                         '</div>',
-                    button = '<button data-ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span data-ng-if="!showCalendar">{{translate.show[configuration.lang]}}</span><span data-ng-if="showCalendar">{{translate.hide[configuration.lang]}}</span></button>',
+                    button = '<button data-ng-click="showCalendar = !showCalendar" class="acc-calendar-button"' +
+                        ' aria-label="{{translate.selectedDate[configuration.lang]}} {{translate.day[configuration.lang]}} {{day}}"></button>',
                     wrapper = $compile(template)(scope);
 
                 scope.wrapper = wrapper;
