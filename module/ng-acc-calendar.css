@@ -20,6 +20,14 @@
     background-position: center -60px;
 }
 
+.acc-calendar-button span {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  width: 1px;
+  text-indent: -5000px;
+}
+
 .acc-calendar-table-wrapper {
     position: relative;
     margin-top: 10px;
@@ -57,15 +65,20 @@
     font-size: 1em;
 }
 
+.acc-calendar-table-wrapper label[for=acc_month],
+.acc-calendar-table-wrapper label[for=acc_year] {
+  display: inline;
+}
+
+
 .acc-calendar-table-wrapper label[for=acc_month] select {
-    width: 50%;
-    margin-right: 5%;
+  width: 50%;
+  margin-right: 5%;
 }
 
 .acc-calendar-table-wrapper label[for=acc_year] select {
-    width: 25%;
+  width: 25%;
 }
-
 .acc-calendar-table-wrapper table {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
@@ -108,6 +121,13 @@
     font-size: .7em;
 }
 
+.acc-calendar-table-wrapper th span {
+    display: block;
+    padding: 0 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .acc-calendar-table-wrapper td span,
 .acc-calendar-table-wrapper td .acc-button-date {
     display: block;

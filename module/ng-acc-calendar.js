@@ -564,11 +564,12 @@ angular.module('ngAccCalendar', [])
     .directive('accCalendar', ['$compile', '$timeout', '$window', function ($compile, $timeout, $window) {
         return {
             restrict: 'A',
+            require: '?ngModel',
             controller: 'accCalendarController',
             scope: {
                 configuration: '=accCalendar'
             },
-            link: function (scope, element) {
+            link: function (scope, element, iAttrs, ngModelCtrl) {
                 var template = '<div data-ng-show="showCalendar" aria-hidden="{{!showCalendar}}" class="acc-calendar" data-ng-style="{\'top\': (elementPosition.top + elementPosition.height) + \'px\', \'left\': elementPosition.left + \'px\', \'width\': elementPosition.width + \'px\'}">' +
                         '<div class="acc-calendar-table-wrapper">' +
                         '<span><label for="acc_month" data-ng-show="availableMonths.length > 1"><span class="acc-calendar-hidden">{{translate.month[configuration.lang]}}</span>' +
@@ -582,8 +583,8 @@ angular.module('ngAccCalendar', [])
                         '<table data-ng-class="{\'add-calendar-table-week-number\': configuration.showWeekNumber}" aria-activedescendant="{{ariaActivedescendant}}">' +
                         '<caption aria-live="polite" aria-atomic="true">{{translate.monthNaming[configuration.lang][calendarModel.month]}} - {{calendarModel.year}}</caption>' +
                         '<thead><tr>' +
-                        '<th data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}">{{translate.week[configuration.lang].substr(0, 1)}}.</abbr></th>' +
-                        '<th scope="col" data-ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><abbr title="{{header}}">{{header.substr(0, 2)}}</abbr></th></tr></thead>' +
+                        '<th data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><abbr title="{{translate.week[configuration.lang]}}"><span>{{translate.week[configuration.lang]}}</span></th>' +
+                        '<th scope="col" data-ng-repeat="header in translate.headerRow[configuration.lang]" id="d_{{::$index}}"><span>{{header}}</span></th></tr></thead>' +
                         '<tbody><tr data-ng-repeat="semanas in calendarModel.dataRows track by $index" data-index="{{::$index}}" data-last="{{::$last}}" data-ng-class="rowClass($index, $last)" >' +
                         '<th scope="row" data-ng-if="configuration.showWeekNumber" class="add-calendar-week-number"><span class="acc-calendar-hidden">{{translate.week[configuration.lang]}}</span> {{firstWeek + $index}}</th>' +
                         '<td data-ng-repeat="day in semanas track by $index" data-ng-class="cellClass(day, $index)" data-index="{{::$index}}" headers="d_{{::$index}}">' +
@@ -599,7 +600,8 @@ angular.module('ngAccCalendar', [])
                         '</table>' +
                         '</div>' +
                         '</div>',
-                    button = '<button data-ng-click="showCalendar = !showCalendar" class="acc-calendar-button"><span data-ng-if="!showCalendar">{{translate.show[configuration.lang]}}</span><span data-ng-if="showCalendar">{{translate.hide[configuration.lang]}}</span></button>',
+                    button = '<button data-ng-click="showCalendar = !showCalendar" class="acc-calendar-button"' +
+                        ' aria-label="{{translate.selectedDate[configuration.lang]}} {{translate.day[configuration.lang]}} {{day}}"></button>',
                     wrapper = $compile(template)(scope);
 
                 scope.wrapper = wrapper;
@@ -651,6 +653,21 @@ angular.module('ngAccCalendar', [])
                         scope.$apply();
                     }
                 });
+
+                if (ngModelCtrl) {
+
+                    // set the input field value when the model changes
+                    ngModelCtrl.$formatters.push(function (value) {
+                            return value;
+                        }
+                    );
+
+                    // to set the model as date object
+                    ngModelCtrl.$parsers.push(function (value) {
+                        return value;
+                    });
+
+                }
 
                 function elementStyle(elem) {
                     return {
